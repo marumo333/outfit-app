@@ -100,8 +100,8 @@ export default function Mypage() {
 
         const { data, error } = await supabase
             .from('profiles')
-            .insert([{ avatar_url: account }]);
-
+            .update([{ avatar_url: account }])
+            .eq("id", user.id);
 
         if (error) console.error('Error submitting comment', error);
         else {
@@ -148,7 +148,7 @@ export default function Mypage() {
                     <div>
                         {myprofs.map((myprof) => (
                             <div key={myprof.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
-                                <p className="text-blue-500">{myprof.full_name}</p>
+                                <p className="text-blue-500">{myprof.username}</p>
                                 {account && (
                                     <img
                                         src={account}
