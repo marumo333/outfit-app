@@ -8,7 +8,7 @@ export default function Header(){
                 <Link className="text-gray-700 hover:text-blue-700" href="/">Home</Link> 
             </li>
             <li>
-                <Link className="text-gray-700 hover:text-blue-700" href="private">オシャレ服投稿アプリ（プライベート画像）</Link>
+                <Link className="text-gray-700 hover:text-blue-700" href="private">機能性重視の服（プライベート画像）</Link>
             </li>
         </ul>
     </header>
