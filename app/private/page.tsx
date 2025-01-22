@@ -1,6 +1,7 @@
 import ImageApp from "@/components/imageApp";
 
 export default function Private(){
+  return(
   <>
   <h1 className="mb-4 pt-28 text-4xl">オシャレ服投稿アプリ</h1>
   <p className="mb-4">
@@ -11,4 +12,5 @@ export default function Private(){
     <ImageApp/>
   </div>
   </>
+  )
 }
