@@ -3,6 +3,7 @@
 import { supabase } from "@/utils/supabase/supabase";
 import { useEffect, useState } from "react";
 import { v4 as uuid4 } from "uuid";
+import Link from "next/link"
 
 export default function ImageApp() {
   const [urlList, setUrlList] = useState<string[]>([]);
@@ -115,8 +116,11 @@ export default function ImageApp() {
         {urlList.map((item) => (
           <li className="w-1/4 h-auto p-1" key={item}>
             <a className="hover:opacity-50" href={item} target="_blank" rel="noopener noreferrer">
-              <img className="object-cover max-h-32 w-full" src={item} alt="uploaded" />
+              < img className="object-cover max-h-32 w-full" src={item} alt="uploaded"  />
             </a>
+            <Link href="/item">
+            <span className="text-blue-500 underline hover:opacity-50">詳細を表示</span>
+            </Link>
           </li>
         ))}
       </ul>

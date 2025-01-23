@@ -2,24 +2,25 @@ import { db } from '@/app/actions/lib';
 import { notFound } from 'next/navigation';
 
 export default async function Item({
-  params: { id },
+  params: { item },
 }: {
-  params: { id: string; }
+  params: { item: string; }
 }) {
   const post = await db.post.findUnique({
     where: {
-      id,
+      item,
     },
   });
 
-  if (!post) {
+  if (!item) {
     notFound();
   }
 
   return (
-    <article>
-      <h1>{post.title}</h1>
-      <p>{post.body}</p>
-    </article>
+    <li className="w-1/4 h-auto p-1" key={item}>
+    <a className="hover:opacity-50" href={item} target="_blank">
+      <img className="object-cover max-h-32 w-full" src={item} />
+    </a>
+  </li>
   );
 }
