@@ -19,7 +19,6 @@ export default function Item() {
                 setImages(data.map((file) => `public/${file.name}`));
             }
         }
-
         fetchImages()
     }, [])
 
