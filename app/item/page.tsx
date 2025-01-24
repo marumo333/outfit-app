@@ -1,26 +1,32 @@
-import { db } from '@/app/actions/lib';
-import { notFound } from 'next/navigation';
+"use client"
+import { supabase } from "@/utils/supabase/supabase"
+import {useState,useEffect} from "react";
+import ImageDisplay from "./imageDisplay"
 
-export default async function Item({
-  params: { item },
-}: {
-  params: { item: string; }
-}) {
-  const post = await db.post.findUnique({
-    where: {
-      item,
-    },
-  });
-
-  if (!item) {
-    notFound();
-  }
-
-  return (
-    <li className="w-1/4 h-auto p-1" key={item}>
-    <a className="hover:opacity-50" href={item} target="_blank">
-      <img className="object-cover max-h-32 w-full" src={item} />
-    </a>
-  </li>
-  );
+export default function Item(){
+    const imageManager = () => {
+        const [images, setImages] = useState<string[]>([])
+      
+        useEffect(() => {
+          const fetchImages = async () => {
+            const { data, error } = await supabase.storage.from('outfit-image').list('public')
+            if (data) {
+              setImages(data.map(file => `public/${file.name}`))
+            }
+          }
+      
+          fetchImages()
+        }, [])
+      
+        return (
+          <div>
+            <h1>Image Manager</h1>
+            <div>
+              {images.map(imagePath => (
+                <ImageDisplay key={imagePath} imagePath={imagePath} />
+              ))}
+            </div>
+          </div>
+        )
+      }
 }
