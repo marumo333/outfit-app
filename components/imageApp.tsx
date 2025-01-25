@@ -114,7 +114,7 @@ export default function ImageApp() {
 
       <ul className="flex flex-wrap w-full">
         {urlList.map((item) => (
-          <li className="w-1/4 h-auto p-1" key={item.id}>
+          <li className="w-1/4 h-auto p-1" key={item}>
             <a className="hover:opacity-50" href={item} target="_blank" rel="noopener noreferrer">
               < img className="object-cover max-h-32 w-full" src={item} alt="uploaded"  />
             </a>
