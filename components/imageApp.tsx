@@ -5,15 +5,19 @@ import { useEffect, useState } from "react";
 import { v4 as uuid4 } from "uuid";
 import Link from "next/link"
 
+interface ImageItem{
+  name:string,//画像名
+  url:string,//画像のURL
+}
 export default function ImageApp() {
-  const [urlList, setUrlList] = useState<string[]>([]);
+  const [urlList, setUrlList] = useState<ImageItem[]>([]);
   const [loadingState, setLoadingState] = useState("hidden");
   const [file, setFile] = useState<File | undefined>();
 
 
   const listAllImage = async () => {
     setLoadingState("flex justify-center");
-    const tempUrlList: string[] = [];
+    const tempUrlList: ImageItem[] = [];
 
     const { data, error } = await supabase.storage
       .from("outfit-image")
@@ -44,7 +48,7 @@ export default function ImageApp() {
         }
 
         if (signedData?.signedUrl) {
-          tempUrlList.push(signedData.signedUrl);
+          tempUrlList.push({name:file.name,url:signedData.signedUrl});
         }
       }
     }
@@ -114,13 +118,14 @@ export default function ImageApp() {
 
       <ul className="flex flex-wrap w-full">
         {urlList.map((item) => (
-          <li className="w-1/4 h-auto p-1" key={item}>
-            <a className="hover:opacity-50" href={item} target="_blank" rel="noopener noreferrer">
-              < img className="object-cover max-h-32 w-full" src={item} alt="uploaded"  />
+          <li className="w-1/4 h-auto p-1" key={item.name}>
+            <a className="hover:opacity-50" href={item.url} target="_blank" rel="noopener noreferrer">
+              < img className="object-cover max-h-32 w-full" src={item.url} alt="item.name"  />
             </a>
-            <Link href="/image_id">
-            <span className="text-blue-500 underline hover:opacity-50">詳細を表示</span>
-            </Link>
+            <Link href={`/image/${encodeURIComponent(item.name)}`}>
+  <span className="text-blue-500 underline hover:opacity-50">詳細を表示</span>
+</Link>
+
           </li>
         ))}
       </ul>
