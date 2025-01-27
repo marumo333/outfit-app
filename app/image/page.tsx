@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { AiOutlineHeart, AiFillHeart } from "react-icons/ai"
+"use client"
+import React, {  useEffect, useState } from 'react'
 import { supabase } from '@/utils/supabase/supabase'
 
 interface ImageItem{
@@ -59,12 +59,16 @@ export default function Image(){
     })();
   }, []);
 
-  return(
+  return  url.length === 0?(
+    <div className="flex justify-center items-center h-full">
+        No images available
+    </div>
+  ):(
     <ul className="flex flex-wrap w-full">
     {url.map((item) => (
       <li className="w-1/4 h-auto p-1" key={item.name}>
         <a className="hover:opacity-50" href={item.url} target="_blank" rel="noopener noreferrer">
-          < img className="object-cover max-h-32 w-full" src={item.url} alt="item.name"  />
+          < img className="object-cover max-h-32 w-full" src={item.url} alt={item.name}  />
         </a>
       </li>
     ))}
