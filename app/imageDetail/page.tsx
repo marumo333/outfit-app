@@ -9,9 +9,9 @@ interface ImageItem{
   }
 
 export default function ImageDetail(){
-    const [imageDetail,setImageDetail] =useState<ImageDetail|null>(null);
+    const [imageDetail,setImageDetail] =useState<ImageItem|null>(null);
     const [loading,setLoading] = useState(false);
-    const router = useRouter
+    const router = useRouter()
     const {id} = router.query//画像名（URLパラメータ） 
 
   const fetchImageDetail = async (imageName: string) =>{
@@ -43,7 +43,7 @@ setLoading(false);
   if(loading){
     return(
       <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin h-10 w-10 border-blue-50"></div>
+        <div className="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>
       </div>
     )
   }
@@ -57,7 +57,23 @@ setLoading(false);
 
   return (
     <div className="p-4">
-
+      <h1 className="text-2xl font-bold mb-4">{imageDetail.name}</h1>
+      <div className="mb-4">
+        <img
+        src={imageDetail.url}
+        alt={imageDetail.name}
+        className="object-contain max-w-full max-h-[400px] rounded-lg shadow-md"
+        />
+      </div>
+      <div className="flex justify-center">
+        <a
+          href={imageDetail.url}
+          download={imageDetail.name}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg"
+        >
+          ダウンロード
+        </a>
+      </div>
     </div>
   )
 }
