@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { use } from "react";
 import { supabase } from "@/utils/supabase/supabase";
 
+
 interface ImageItem {
   name: string; // 画像名
   url: string;  // 画像の URL
@@ -46,7 +47,31 @@ export default function Image({params}:{params:Promise<{id:string}>}) {
       fetchImage(unwrapParams.id);
     }
   },[unwrapParams.id]);
+
+  const handleDelete=async(imageName: string)=>{
+    try {
+      const filePath = `img/${imageName}`;
+      const {error} = await supabase.storage
+      .from("outfit-image")
+      .remove([filePath])
+
+      if(error) throw new Error (`削除エラー${error.message}`)
+
+        alert("画像を削除しました")
+      setImageDetail(null);
+    } catch (error:any) {
+      alert(error.message);
+    }
+  }
   
+  useEffect(()=>{
+    (async ()=>{
+      const resolvedParams = await params;
+      if(resolvedParams.id){
+        fetchImage(resolvedParams.id)
+      }
+    })();
+  },[params])
 
   if (loading) {
     return (
@@ -66,7 +91,7 @@ export default function Image({params}:{params:Promise<{id:string}>}) {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">{imageDetail.name}</h1>
+      <h1 className="text-2xl  mb-4">画像のURL:{imageDetail.name}</h1>
       <div className="mb-4">
         <img
           src={imageDetail.url}
@@ -82,6 +107,11 @@ export default function Image({params}:{params:Promise<{id:string}>}) {
         >
           ダウンロード
         </a>
+        <div className="flex justify-center">
+          <button onClick={() => handleDelete(unwrapParams.id)}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg"
+          >投稿の削除</button>
+        </div>
       </div>
     </div>
   );
