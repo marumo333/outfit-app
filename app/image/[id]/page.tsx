@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { use } from "react";
 import { supabase } from "@/utils/supabase/supabase";
 
 interface ImageItem {
@@ -9,13 +9,14 @@ interface ImageItem {
   url: string;  // 画像の URL
 }
 
-export default function ImageDetail() {
+
+export default function Image({params}:{params:Promise<{id:string}>}) {
+  const unwrapParams = use(params);
   const [imageDetail, setImageDetail] = useState<ImageItem | null>(null);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const { id } = router.query; // URL のパラメータから id を取得
+  
 
-  const fetchImageDetail = async (imageName: string) => {
+  const fetchImage = async (imageName: string) => {
     setLoading(true);
     const filePath = `img/${imageName}`;
     console.log("ファイルパス:", filePath);
@@ -24,8 +25,7 @@ export default function ImageDetail() {
       .from("outfit-image")
       .createSignedUrl(filePath, 300);
 
-    console.log("生成されたファイルパス:", filePath);
-    console.log("生成されたサイン付き URL:", signedData?.signedUrl);
+
 
     if (error) {
       console.error("画像取得エラー:", error.message);
@@ -42,11 +42,10 @@ export default function ImageDetail() {
   };
 
   useEffect(() => {
-    console.log("URL パラメータ:", id);
-    if (router.isReady && id) {
-      fetchImageDetail(id as string);
+    if(unwrapParams.id){
+      fetchImage(unwrapParams.id);
     }
-  }, [router.isReady, id]);
+  },[unwrapParams.id]);
   
 
   if (loading) {
