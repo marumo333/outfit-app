@@ -1,6 +1,7 @@
 "use client";
 
 import { createClient } from "@supabase/supabase-js";
+import  "../globals.css"
 
 
 const projectUrl = "https://tkkavdiinrmmeeghllrr.supabase.co";
@@ -38,10 +39,11 @@ export default function Home() {
   }
 
   return (
-  <>
-    <button onClick={signInGitHub}>githubでログイン</button>
-    <button onClick={signOutGithub}>githubでログアウト</button>
-    </>
+  <div className="flex justify-center">
+    <button onClick={signInGitHub} className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">githubでログイン</button>
+    
+    <button onClick={signOutGithub} className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">githubでログアウト</button>
+    </div>
     
   );
 }
