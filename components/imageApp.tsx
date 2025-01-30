@@ -4,6 +4,8 @@ import  supabase  from "@/utils/supabase/supabase";
 import { useEffect, useState } from "react";
 import { v4 as uuid4 } from "uuid";
 import Link from "next/link"
+import {useSelector,useDispatch} from "react-redux";
+import { signOut } from "../app/authSlice";
 
 interface ImageItem{
   name:string,//画像名
@@ -13,7 +15,8 @@ export default function ImageApp() {
   const [urlList, setUrlList] = useState<ImageItem[]>([]);
   const [loadingState, setLoadingState] = useState("hidden");
   const [file, setFile] = useState<File | undefined>();
-
+  
+  const dispatch = useDispatch();
 
   const listAllImage = async () => {
     setLoadingState("flex justify-center");
