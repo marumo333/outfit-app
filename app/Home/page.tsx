@@ -5,7 +5,6 @@ import  "../globals.css"
 import { signOut } from "../authSlice";
 import { useSelector,useDispatch } from "react-redux";
 import {useEffect} from "react";
-import "./env.local"
 
 const projectUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const apikey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -40,29 +39,37 @@ export default function Home() {
 return () =>{
   authListener?.subscription.unsubscribe();
 };
-  },[]);
+  },[dispatch]);
 
   const signInGitHub = async () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'github'
     })
+    if(error) throw new Error(error.message)
   }
   
   const signOutGithub = async () => {
-    const { error } = await supabase.auth.signOut()
-    dispatch(signOut())
+   try{ const { error } = await supabase.auth.signOut()
     if(error) throw new Error(error.message)
-   
-    
+      dispatch(signOut());}
+    catch(error:any){
+      console.error("ログアウトエラー発生",error.message)
+    }
   }
 
   return (
   <div className="flex justify-center">
     <button onClick={signInGitHub} className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">githubでログイン</button>
     
-   {auth?(<button onClick={signOutGithub} className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">githubでログアウト</button>):<></>}
+   {auth ? (
+    <button 
+    onClick={signOutGithub} 
+    className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">
+      githubでログアウト
+      </button>
+      ) : (<div className="text-gray-500">ログインしてください</div>
+      )}
     </div>
-    
   );
 }
 
