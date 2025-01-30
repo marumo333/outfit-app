@@ -10,6 +10,7 @@ const supabase = createClient(projectUrl, apikey);
 
 
 supabase.auth.onAuthStateChange((event, session) => {
+  console.log(event)
   if (session && session.provider_token) {
     window.localStorage.setItem('oauth_provider_token', session.provider_token)
   }

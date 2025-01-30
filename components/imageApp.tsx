@@ -1,6 +1,6 @@
 "use client";
 
-import { supabase } from "@/utils/supabase/supabase";
+import  supabase  from "@/utils/supabase/supabase";
 import { useEffect, useState } from "react";
 import { v4 as uuid4 } from "uuid";
 import Link from "next/link"
@@ -19,7 +19,7 @@ export default function ImageApp() {
     setLoadingState("flex justify-center");
     const tempUrlList: ImageItem[] = [];
 
-    const { data, error } = await supabase.storage
+    const { data, error } = await supabase().storage
       .from("outfit-image")
       .list("img", {
         limit: 100,
@@ -38,7 +38,7 @@ export default function ImageApp() {
     for (const file of fileList) {
       if (file.name !== ".emptyFolderPlaceholder") {
         const filePath = `img/${file.name}`;
-        const { data: signedData, error: signedError } = await supabase.storage
+        const { data: signedData, error: signedError } = await supabase().storage
           .from("outfit-image")
           .createSignedUrl(filePath, 300);
 
@@ -70,7 +70,7 @@ export default function ImageApp() {
 
     if (file && file.type.match("image.*")) {
       const fileExtension = file.name.split(".").pop();
-      const { error } = await supabase.storage
+      const { error } = await supabase().storage
         .from("outfit-image")
         .upload(`img/${uuid4()}.${fileExtension}`, file);
 
