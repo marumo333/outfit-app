@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { use } from "react";
 import  supabase  from "@/utils/supabase/supabase";
+import Comment from "./comment"
 
 
 interface ImageItem {
@@ -113,6 +114,8 @@ export default function Image({params}:{params:Promise<{id:string}>}) {
           >投稿の削除</button>
         </div>
       </div>
+      <Comment />
     </div>
+    
   );
 }
