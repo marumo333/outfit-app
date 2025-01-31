@@ -50,13 +50,13 @@ const Comment=()=>{
                 />
                 <button type="submit">コメントを投稿</button> 
             </form>
-            <div>
+            <ul>
                 {comments.map((comment)=>{
-                    <div key ={comment.id} style={{border: '1px solid #ccc',padding:'10px',margin:'10px0'}}>
+                    <li key ={comment.id} style={{border: '1px solid #ccc',padding:'10px',margin:'10px0'}}>
                         <p>{comment.content}</p>
-                        </div>
+                        </li>
                 })}
-            </div>
+            </ul>
         </div>
     )
 }

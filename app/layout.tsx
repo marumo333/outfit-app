@@ -1,6 +1,5 @@
 import Header from "@/components/header"
 import "./globals.css";
-import {Provider} from "react-redux";
 import store from './store';
 import ClientWrapper from "./clientWrapper"
 const defaultURL = process.env.VERCEL_URL
