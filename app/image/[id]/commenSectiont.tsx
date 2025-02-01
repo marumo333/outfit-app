@@ -1,7 +1,7 @@
-'use client';
+"use client"
 
 import React, { useState, useEffect } from 'react';
-import supabase from '../../supabaseClient';
+import  supabase  from "@/utils/supabase/supabase";
 
 interface Comment {
   id: number;
@@ -9,7 +9,7 @@ interface Comment {
   created_at: string;
 }
 
-const Page = () => {
+export   const CommentSection = ()=> {
   const [comment, setComment] = useState<string>('');
   const [comments, setComments] = useState<Comment[]>([]);
 
@@ -25,7 +25,7 @@ const Page = () => {
 
   useEffect(() => {
     fetchComments();
-  }, []);
+  }, [comments]);
 
   const handleCommentSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -38,7 +38,7 @@ const Page = () => {
     if (error) console.error('Error submitting comment', error);
     else {
       setComment('');
-      fetchComments();
+      setComments([...(data||[]),...comments]);
     }
   };
 
@@ -64,5 +64,6 @@ const Page = () => {
   );
 };
 
-export default Page;
 
+
+export default CommentSection;

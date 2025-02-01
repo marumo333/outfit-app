@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { use } from "react";
 import  supabase  from "@/utils/supabase/supabase";
-import Comment from "./comment"
+import CommentSection from "./commenSectiont"
 
 
 interface ImageItem {
@@ -23,7 +23,7 @@ export default function Image({params}:{params:Promise<{id:string}>}) {
     const filePath = `img/${imageName}`;
     console.log("ファイルパス:", filePath);
 
-    const { data: signedData, error } = await supabase().storage
+    const { data: signedData, error } = await supabase.storage
       .from("outfit-image")
       .createSignedUrl(filePath, 300);
 
@@ -52,7 +52,7 @@ export default function Image({params}:{params:Promise<{id:string}>}) {
   const handleDelete=async(imageName: string)=>{
     try {
       const filePath = `img/${imageName}`;
-      const {error} = await supabase().storage
+      const {error} = await supabase.storage
       .from("outfit-image")
       .remove([filePath])
 
@@ -114,7 +114,7 @@ export default function Image({params}:{params:Promise<{id:string}>}) {
           >投稿の削除</button>
         </div>
       </div>
-      <Comment />
+      <CommentSection />
     </div>
     
   );

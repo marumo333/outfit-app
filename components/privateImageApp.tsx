@@ -9,8 +9,7 @@ export default function PrivateImageApp() {
   const listAllImage = async () => {
     const tempUrlList: string[] = []
     setLoadingState("flex justify-center")
-    const { data, error } = await supabase
-      ().storage
+    const { data, error } = await supabase.storage
       .from('outfit-image')
       .list("img", {
         limit: 100,
@@ -25,7 +24,7 @@ export default function PrivateImageApp() {
     for (let index = 0; index < fileList.length; index++) {
         if (fileList[index].name != ".emptyFolderPlaceholder") {
           const filePath = `img/${fileList[index].name}`
-          const { data, error } = await supabase().storage.from('outfit-image').createSignedUrl(filePath, 300)
+          const { data, error } = await supabase.storage.from('outfit-image').createSignedUrl(filePath, 300)
           if (error) {
             console.log(error)
             return
@@ -58,7 +57,7 @@ export default function PrivateImageApp() {
     
         if (file!!.type.match("image.*")) {
           const fileExtension = file!!.name.split(".").pop()
-          const { error } = await supabase().storage
+          const { error } = await supabase.storage
             .from('outfit-image')
             .upload(`img/${uuidv4()}.${fileExtension}`, file!!)
           if (error) {
