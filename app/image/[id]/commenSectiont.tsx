@@ -51,7 +51,7 @@ export   const CommentSection = ()=> {
           onChange={e => setComment(e.target.value)}
           placeholder="Write a comment..."
         />
-        <button type="submit">Post Comment</button>
+        <button className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0" type="submit">コメント投稿</button>
       </form>
       <div>
         {comments.map((comment) => (
