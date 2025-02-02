@@ -20,20 +20,21 @@ export   const CommentSection = ()=> {
       .order('created_at', { ascending: false });
 
     if (error) console.error('Error fetching comments', error);
-    else setComments(data);
+    else setComments(data||[]);
   };
 
   useEffect(() => {
     fetchComments();
-  }, [comments]);
+  }, []);
 
   const handleCommentSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!comment.trim()) return;//無記名送信を避ける
+
     const { data, error } = await supabase
       .from('comments')
-      .insert([
-        { content: comment }
-      ]);
+      .insert([{ content: comment }]);
+   
 
     if (error) console.error('Error submitting comment', error);
     else {
@@ -41,14 +42,24 @@ export   const CommentSection = ()=> {
       setComments([...(data||[]),...comments]);
     }
   };
-
+  const getComments =()=>{
+    const data = supabase
+    .from('comments')
+      .select('*')
+      .order('created_at', { ascending: false });
+      setComments([])
+      console.log(data)
+  }
+  useEffect(()=>{
+    getComments();
+  },[]);
   return (
     <div>
       <h1>Comments</h1>
       <form onSubmit={handleCommentSubmit}>
         <textarea
           value={comment}
-          onChange={e => setComment(e.target.value)}
+          onChange={(e) => setComment(e.target.value)}
           placeholder="Write a comment..."
         />
         <button className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0" type="submit">コメント投稿</button>
