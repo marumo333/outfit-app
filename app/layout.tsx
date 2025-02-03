@@ -1,6 +1,7 @@
 import Header from "@/components/header"
 import "./globals.css";
-
+import store from './store';
+import ClientWrapper from "./clientWrapper"
 const defaultURL = process.env.VERCEL_URL
 ? `https://${process.env.VERCEL_URL}`
 : "http://localhost:3000";
@@ -18,9 +19,12 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className="bg-background text-foreground">
+      
         <Header></Header>
         <main className="min-h-screen flex flex-col items-center px2">
+        <ClientWrapper>
           {children}
+          </ClientWrapper>
         </main>
       </body>
     </html>
