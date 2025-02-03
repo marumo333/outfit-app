@@ -24,7 +24,8 @@ export   const CommentSection = ()=> {
   };
 
   useEffect(() => {
-    fetchComments();
+    (async()=>{await fetchComments();
+    })();
   }, []);
 
   const handleCommentSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -42,17 +43,7 @@ export   const CommentSection = ()=> {
       setComments([...(data||[]),...comments]);
     }
   };
-  const getComments =()=>{
-    const data = supabase
-    .from('comments')
-      .select('*')
-      .order('created_at', { ascending: false });
-      setComments([])
-      console.log(data)
-  }
-  useEffect(()=>{
-    getComments();
-  },[]);
+  
   return (
     <div>
       <h1>Comments</h1>
