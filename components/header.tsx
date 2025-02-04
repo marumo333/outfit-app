@@ -1,5 +1,5 @@
 import Link from "next/link"
-import {useState} from "react";
+import React, {useState} from "react";
 
 export default function Header(){
     const [text,setText]= useState("Home");

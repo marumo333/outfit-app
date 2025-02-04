@@ -1,25 +1,30 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import Header from '../components/header'; // Headerのパスを正しく指定
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import Header from '../components/header';
+import '@testing-library/jest-dom';
 
 describe('Header Component', () => {
-    test('renders correctly', () => {
+    // ...
+
+    test('changes text on button click', async () => {
         render(<Header />);
-
-        const homeLink = screen.getByText('Home');
-        expect(homeLink).toBeInTheDocument();
-
         const executeButton = screen.getByTestId('excutebutton');
-        expect(executeButton).toBeInTheDocument();
-    });
 
-    test('changes text on button click', () => {
-        render(<Header />);
+        // 初期状態のテキストを確認 (テストの信頼性を高めるため)
+        expect(screen.getByText('Home')).toBeInTheDocument();
 
-        const executeButton = screen.getByTestId('excutebutton');
-        executeButton.click();
+        // userEventを使ってクリックをシミュレート
+        await userEvent.click(executeButton);
 
-        const updatedText = screen.getByText('Homeにページ遷移後');
-        expect(updatedText).toBeInTheDocument();
+        // ページ遷移とテキスト変更を待つ
+        await waitFor(() => {
+            // 変化後のテキストが表示されていることを確認
+            expect(screen.getByText('Homeにページ遷移後')).toBeInTheDocument();
+        });
+
+        // ページ遷移が起こったことを確認 (オプション)
+        // (この部分はJest環境でのテストでは難しい場合があります)
+        // expect(window.location.pathname).toBe('/Home'); 
     });
 });
