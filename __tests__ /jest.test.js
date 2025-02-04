@@ -23,8 +23,6 @@ describe('Header Component', () => {
             expect(screen.getByText('Homeにページ遷移後')).toBeInTheDocument();
         });
 
-        // ページ遷移が起こったことを確認 (オプション)
-        // (この部分はJest環境でのテストでは難しい場合があります)
-        // expect(window.location.pathname).toBe('/Home'); 
+        
     });
 });
