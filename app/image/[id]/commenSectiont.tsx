@@ -12,15 +12,16 @@ interface Comment {
 export   const CommentSection = ()=> {
   const [comment, setComment] = useState<string>('');
   const [comments, setComments] = useState<Comment[]>([]);
+  const [selectId,setSelectId]=useState<number|null>(null);
 
   const fetchComments = async () => {
     const { data, error } = await supabase
       .from('comments')
       .select('*')
       .order('created_at', { ascending: false });
-
     if (error) console.error('Error fetching comments', error);
     else setComments(data||[]);
+
   };
 
   useEffect(() => {
@@ -43,7 +44,26 @@ export   const CommentSection = ()=> {
       setComments([...(data||[]),...comments]);
     }
   };
-  
+
+  const handleSelectChange=(event:React.ChangeEvent<HTMLSelectElement>)=>{
+    setSelectId(Number(event.target.value))
+  }
+
+  const handleDelete=async(selectId:string)=>{
+   if(selectId===null) return
+
+   try{
+    const {error} = await supabase
+    .from('comment')
+    .delete()
+
+if(error) throw new Error("削除エラー",error)
+
+   }catch (error:any) {
+    alert(error.message);
+  }
+  };
+
   return (
     <div>
       <h1>Comments</h1>
@@ -57,10 +77,23 @@ export   const CommentSection = ()=> {
       </form>
       <div>
         {comments.map((comment) => (
-          <div key={comment.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
+          <select id="selectId" multiple onChange={handleSelectChange}>
+          <option
+          key={comment.id} 
+          value={comment.id}
+          style={{ border: '1px solid #ccc', 
+          padding: '10px', 
+          margin: '10px 0' }}
+          >
             <p>{comment.content}</p>
-          </div>
+          </option>
+          </select>
         ))}
+      </div>
+      <div
+      onClick={()=>handleDelete}
+      >
+      選択中のコメントを削除
       </div>
     </div>
   );
