@@ -19,14 +19,16 @@ export   const CommentSection = ()=> {
       .from('comments')
       .select('*')
       .order('created_at', { ascending: false });
+
     if (error) console.error('Error fetching comments', error);
     else setComments(data||[]);
-
   };
 
   useEffect(() => {
-    (async()=>{await fetchComments();
-    })();
+    const getComments= async()=>{
+      await fetchComments();
+    }
+    getComments();
   }, []);
 
   const handleCommentSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -41,7 +43,9 @@ export   const CommentSection = ()=> {
     if (error) console.error('Error submitting comment', error);
     else {
       setComment('');
-      setComments([...(data||[]),...comments]);
+    }
+    if(data){
+      setComments([data[0],...comments]);//追加するコメントを先頭に配置
     }
   };
 
@@ -49,16 +53,20 @@ export   const CommentSection = ()=> {
     setSelectId(Number(event.target.value))
   }
 
-  const handleDelete=async(selectId:string)=>{
+  const handleDelete=async()=>{
    if(selectId===null) return
 
    try{
     const {error} = await supabase
-    .from('comment')
+    .from('comments')
     .delete()
+    .eq("id",selectId)//削除対象を特定
 
 if(error) throw new Error("削除エラー",error)
 
+  // UI更新（削除後に再取得 or フィルタリング）
+  setComments(comments.filter(c => c.id !== selectId));
+  setSelectId(null);
    }catch (error:any) {
     alert(error.message);
   }
@@ -76,8 +84,9 @@ if(error) throw new Error("削除エラー",error)
         <button className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0" type="submit">コメント投稿</button>
       </form>
       <div>
-        {comments.map((comment) => (
-          <select id="selectId" multiple onChange={handleSelectChange}>
+        
+          <select id="selectId"  onChange={handleSelectChange}>
+          {comments.map((comment) => (
           <option
           key={comment.id} 
           value={comment.id}
@@ -85,16 +94,16 @@ if(error) throw new Error("削除エラー",error)
           padding: '10px', 
           margin: '10px 0' }}
           >
-            <p>{comment.content}</p>
+            {comment.content}
           </option>
+           ))}
           </select>
-        ))}
       </div>
-      <div
-      onClick={()=>handleDelete}
+      <p onClick={handleDelete}
+      className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0"
       >
       選択中のコメントを削除
-      </div>
+      </p>
     </div>
   );
 };
