@@ -6,6 +6,7 @@ import { v4 as uuid4 } from "uuid";
 import Link from "next/link"
 import {useSelector,useDispatch} from "react-redux";
 import { signOut } from "../app/authSlice";
+import React from "react";
 
 interface ImageItem{
   name:string,//画像名

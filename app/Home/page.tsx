@@ -7,6 +7,7 @@ import {signIn} from "../authSlice";
 import { useSelector,useDispatch } from "react-redux";
 import {useEffect,useState} from "react";
 import { useCookies } from "react-cookie";
+import React from "react";
 
 const projectUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const apikey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

@@ -5,7 +5,7 @@ import Header from '../components/header';
 import '@testing-library/jest-dom';
 
 describe('Header Component', () => {
-    // ...
+    
 
     test('changes text on button click', async () => {
         render(<Header />);

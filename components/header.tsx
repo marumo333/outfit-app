@@ -1,3 +1,4 @@
+"use client"
 import Link from "next/link"
 import React, {useState} from "react";
 
@@ -19,7 +20,7 @@ export default function Header(){
 
         {/* 修正: テストでクリックできるボタンを追加 */}
         <button
-        data-testId="excutebutton"
+        data-testid="excutebutton"
         onClick={()=>setText("Homeにページ遷移後")}
         className="mt-4 p-2 bg-blue-500 text-white rounded"
         >

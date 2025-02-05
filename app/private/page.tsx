@@ -1,4 +1,5 @@
 import ImageApp from "@/components/imageApp";
+import React from "react";
 
 export default function Private(){
   return(
