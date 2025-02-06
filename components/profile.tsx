@@ -6,6 +6,13 @@ import Compressor from 'compressorjs'
 import { useForm } from 'react-hook-form'
 import Link from "next/link";
 
+interface ImageItem {
+    name: string; // 画像名
+    url: string;  // 画像の URL
+    file:string;
+  }
+  
+
 const Profile = () => {
     const [file, setFile] = useState();
     const [user, setUser] = useState({name:'sei',iconUrl:'icon'}); // ユーザー情報を保持するステート
@@ -32,7 +39,7 @@ const Profile = () => {
                 const errorMsg = err.response?.data?.message || 'ユーザー情報の取得に失敗しました。';
                 setError(errorMsg);
             } else {
-                setError('予期しないエラーが発生しました。');
+                setError(error);
             }
             console.error('エラー発生', err);
         } finally {
@@ -55,13 +62,13 @@ const Profile = () => {
             })
             .catch((error) => {
                 console.error("エラー", error);
-                setErrorMessage("データの取得に失敗しました。"); // エラーメッセージを設定
+                setError(error); // エラーメッセージを設定
              });
     }, [])
     // ユーザー名を更新する関数
     const handleUpdateUserName = async () => {
         if (!user.name) {
-            setError('名前を入力してください。');
+            setError(error);
             return;
         }
         console.log('put name',user.name)
@@ -85,13 +92,13 @@ const Profile = () => {
                 const errorMsg = err.response?.data?.message || 'ユーザー名の更新中にエラーが発生しました。';
                 setError(errorMsg);
             } else {
-                setError('予期しないエラーが発生しました。');
+                setError(error);
             }
             console.error('エラー発生', err);
         }
     };
 
-    const handleFileChange = (event) => {
+    const handleFileChange = (event:any) => {
         const selectedFile = event.target.files[0]; // 選択したファイルを保存
         console.log(selectedFile); // デバッグ用: 選択したファイルを確認
 
@@ -111,16 +118,16 @@ const Profile = () => {
                 },
                 error(err) {
                     console.error(err.message);
-                    setError('画像の圧縮中にエラーが発生しました。');
+                    setError(error);
                 },
             });
         }
     };
-    const handleUpload = async (e) => {
-        e.preventDefault();
+    const handleUpload = async (event:any) => {
+        event.preventDefault();
         console.log('aaaaa')
         if (!file) {
-            setError('ファイルを選択してください。');
+            setError(error);
             return;
         }
         console.log('Uploading file:',file); // デバッグ用: アップロードするファイルを確認
@@ -172,7 +179,7 @@ const Profile = () => {
                 placeholder="新しい名前"
                 autoComplete="name"
             />
-            <button type="update-button"onClick={handleUpdateUserName}>名前を更新</button>
+            <button className="update-button"onClick={handleUpdateUserName}>名前を更新</button>
 
             <form className="icon-upload" >
             <input
@@ -181,7 +188,7 @@ const Profile = () => {
              value={user.file} 
              onChange={handleFileChange} 
              />
-            <button type="upload-button" onClick={handleUpload}>アイコンをアップロード</button>
+            <button className="upload-button" onClick={handleUpload}>アイコンをアップロード</button>
             {compressedFile && <img src={compressedFile} alt="Compressed" />}
             {error && <p className="error">{error}</p>}
             {successMessage && <p className="success">{successMessage}</p>}
