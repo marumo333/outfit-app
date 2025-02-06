@@ -24,7 +24,7 @@ export default function Header(){
         onClick={()=>setText("Homeにページ遷移後")}
         className="mt-4 p-2 bg-blue-500 text-white rounded"
         >
-            実行
+        
         </button>
     </header>
  )
