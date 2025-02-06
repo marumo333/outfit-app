@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link"
 import React, {useState} from "react";
-
+import Profile from "./profile";
 export default function Header(){
     const [text,setText]= useState("Home");
 
@@ -16,15 +16,17 @@ export default function Header(){
             <li>
                 <Link className="text-gray-700 hover:text-blue-700" href="/private">機能性重視の服（プライベート画像）</Link>
             </li>
+            <li>
+                <Profile/>
+            </li>
         </ul>
 
         {/* 修正: テストでクリックできるボタンを追加 */}
         <button
         data-testid="excutebutton"
-        onClick={()=>setText("Homeにページ遷移後")}
+        onClick={()=>setText("Home")}
         className="mt-4 p-2 bg-blue-500 text-white rounded"
         >
-        
         </button>
     </header>
  )
