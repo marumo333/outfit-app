@@ -1,6 +1,6 @@
 "use client";
 
-import { createClient } from "@supabase/supabase-js";
+import  {supabase}  from "@/utils/supabase/supabase";
 import  "../globals.css"
 import { signOut } from "../authSlice";
 import {signIn} from "../authSlice";
@@ -8,12 +8,6 @@ import { useSelector,useDispatch } from "react-redux";
 import {useEffect,useState} from "react";
 import { useCookies } from "react-cookie";
 import React from "react";
-
-const projectUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const apikey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const supabase = createClient(projectUrl!, apikey!);
-
-
 
 //onAuthChangeをuseEffectに挿入
 export default function Home() {

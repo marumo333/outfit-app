@@ -1,6 +1,6 @@
 "use client";
 
-import  supabase  from "@/utils/supabase/supabase";
+import  {supabase}  from "@/utils/supabase/supabase";
 import { useEffect, useState } from "react";
 import { v4 as uuid4 } from "uuid";
 import Link from "next/link"

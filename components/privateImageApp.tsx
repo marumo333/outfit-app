@@ -1,5 +1,5 @@
 "use client"
-import  supabase  from "@/utils/supabase/supabase"
+import  {supabase}  from "@/utils/supabase/supabase"
 import { useEffect, useState } from "react"
 import { v4 as uuidv4 } from 'uuid'
 
