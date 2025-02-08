@@ -18,6 +18,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "compressorjs": "^1.2.1",
+    "flowbite-svelte": "^0.47.4",
     "lucide-react": "^0.468.0",
     "luxon": "^3.5.0",
     "next": "^15.1.6",

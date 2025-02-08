@@ -1,7 +1,6 @@
 "use client"
 import Link from "next/link"
 import React, {useState} from "react";
-import Profile from "./profile";
 export default function Header(){
     const [text,setText]= useState("Home");
 
@@ -15,9 +14,6 @@ export default function Header(){
 
             <li>
                 <Link className="text-gray-700 hover:text-blue-700" href="/private">機能性重視の服（プライベート画像）</Link>
-            </li>
-            <li>
-                <Profile/>
             </li>
         </ul>
 
