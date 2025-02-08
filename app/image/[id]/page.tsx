@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { use } from "react";
 import  {supabase}  from "@/utils/supabase/supabase";
-import CommentSection from "./commenSectiont"
+import CommentSection from "./commentSectiont"
 
 
 interface ImageItem {

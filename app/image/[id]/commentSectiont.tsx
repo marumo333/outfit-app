@@ -84,7 +84,16 @@ if(error) throw new Error("削除エラー",error)
         <button className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0" type="submit">コメント投稿</button>
       </form>
       <div>
-        
+        <p>コメント一覧</p>
+      </div>
+      <div>
+        {comments.map((comment) => (
+          <div key={comment.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
+            <p>{comment.content}</p>
+          </div>
+        ))}
+      </div>
+      <div>
           <select id="selectId"  onChange={handleSelectChange}>
           {comments.map((comment) => (
           <option
