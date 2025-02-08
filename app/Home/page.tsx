@@ -8,6 +8,7 @@ import { useSelector,useDispatch } from "react-redux";
 import {useEffect,useState} from "react";
 import { useCookies } from "react-cookie";
 import React from "react";
+import Icon from "./Icon"
 
 //onAuthChangeをuseEffectに挿入
 export default function Home() {
@@ -73,9 +74,13 @@ return () =>{
       githubでログアウト
       </button>
       ) :(
-        <div className="text-gray-500">ログイン情報を取得中</div>
+        <div className="text-gray-500" color="blue">ログイン情報を取得中</div>
       )
     }
+    {user?(
+      <Icon/>):(
+        <div className="text-gray-500" color="green">アイコンを取得してください</div>
+    )}
     </div>
   );
 }
