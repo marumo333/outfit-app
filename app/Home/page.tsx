@@ -16,7 +16,7 @@ export default function Home() {
   const dispatch = useDispatch()
   const[user,setUser]= useState("")//ログイン情報を保持するステート
   const [cookies] = useCookies()
-
+  const [avatarUrl, setAvatarUrl] = useState<string>(""); // URLを保存する状態
   useEffect(()=>{
     const{data:authListener} =supabase.auth.onAuthStateChange(
       (event,session)=>{
@@ -63,6 +63,17 @@ return () =>{
     }
   }
 
+  useEffect(() => {
+    if (!user) return; // user が null の場合は何もしない
+  
+    const fetchAvatarUrl = async () => {
+      const { data } = supabase.storage.from("avatars").getPublicUrl("avatar.JPG");
+      setAvatarUrl(data.publicUrl || "");
+    };
+  
+    fetchAvatarUrl();
+  }, [user]);
+  
   return (
   <div className="flex justify-center">
     <button onClick={signInGitHub} className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">githubでログイン</button>
@@ -74,12 +85,12 @@ return () =>{
       githubでログアウト
       </button>
       ) :(
-        <div className="text-gray-500" color="blue">ログイン情報を取得中</div>
+        <div className="text-gray-500" color="blue"><p>ログイン情報を取得中:</p></div>
       )
     }
     {user?(
-      <Icon/>):(
-        <div className="text-gray-500" color="green">アイコンを取得してください</div>
+      <Icon url={avatarUrl}/>):(
+        <div className="text-gray-500" color="green"><span>アイコンを取得してください</span></div>
     )}
     </div>
   );
