@@ -67,7 +67,7 @@ return () =>{
     if (!user) return; // user が null の場合は何もしない
   
     const fetchAvatarUrl = async () => {
-      const { data } = supabase.storage.from("avatars").getPublicUrl("avatar.JPG");
+      const { data } = supabase.storage.from("avatars").getPublicUrl("skz.jpeg");
       setAvatarUrl(data.publicUrl || "");
     };
   
