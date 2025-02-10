@@ -73,11 +73,22 @@ return () =>{
   
     fetchAvatarUrl();
   }, [user]);
+
+  const googleLogin = async () => {
+    const { user, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+    });
+    if (error) {
+      console.error('Error logging in:', error);
+    } else {
+      console.log('User logged in:', user);
+    }
+  };
   
   return (
   <div className="flex justify-center">
     <button onClick={signInGitHub} className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">githubでログイン</button>
-    
+    <button onClick={googleLogin} className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">googleログイン</button>
    {user?(
     <button 
     onClick={signOutGithub} 
