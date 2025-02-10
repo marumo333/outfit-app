@@ -4,8 +4,7 @@ import  {supabase}  from "@/utils/supabase/supabase";
 import { useEffect, useState } from "react";
 import { v4 as uuid4 } from "uuid";
 import Link from "next/link"
-import {useSelector,useDispatch} from "react-redux";
-import { signOut } from "../app/authSlice";
+import {useDispatch} from "react-redux";
 import React from "react";
 
 interface ImageItem{

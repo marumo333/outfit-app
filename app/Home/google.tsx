@@ -25,7 +25,6 @@ export default function Google() {
         console.log(event)
   if (session?.user) {
     setUser(session.user.email||"Google User")
-    navigate('/private')
     dispatch(signIn({
       name: session.user.email, 
     iconUrl: "", 
@@ -48,6 +47,11 @@ return () =>{
   authListener?.subscription.unsubscribe();
 };
   },[dispatch]);
+  useEffect(()=>{
+        if(user){
+          navigate("/private")
+        }
+    },[user,navigate])
 
   const signInGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({

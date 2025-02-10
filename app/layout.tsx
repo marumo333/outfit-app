@@ -1,33 +1,28 @@
-import Header from "@/components/header"
+
+import Header from "@/components/header";
 import "./globals.css";
 import React from "react";
-import store from './store';
-import ClientWrapper from "./clientWrapper"
-const defaultURL = process.env.VERCEL_URL
-? `https://${process.env.VERCEL_URL}`
-: "http://localhost:3000";
+import ClientWrapper from "./clientWrapper";
 
-export const metadata ={
-  metadataBase: new URL(defaultURL),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
+const defaultURL = process.env.NEXT_PUBLIC_VERCEL_URL
+  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+  : process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+export const metadata = {
+  metadataBase: defaultURL ? new URL(defaultURL) : undefined,
 };
-export default function RootLayout({
-  children,
-}:{
-  children:React.ReactNode;
-}){
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
       <body className="bg-background text-foreground">
-      
-        <Header></Header>
+        <Header />
         <main className="min-h-screen flex flex-col items-center px2">
-        <ClientWrapper>
-          {children}
-          </ClientWrapper>
+          {/* ClientWrapperを使用してクライアント側のロジックを分離 */}
+          <ClientWrapper>{children}</ClientWrapper>
         </main>
       </body>
     </html>
   );
 }
+

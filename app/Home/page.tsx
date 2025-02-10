@@ -26,7 +26,6 @@ export default function Home() {
         console.log(event)
   if (session?.user) {
     setUser(session.user.email||"GitHub User")
-    navigate('/private')
     dispatch(signIn({
       name: session.user.email, 
     iconUrl: "", 
@@ -50,6 +49,11 @@ return () =>{
 };
   },[dispatch]);
 
+  useEffect(()=>{
+      if(user){
+        navigate("/private")
+      }
+  },[user,navigate])
   const signInGitHub = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github'

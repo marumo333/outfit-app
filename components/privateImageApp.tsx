@@ -95,7 +95,7 @@ export default function PrivateImageApp() {
           {urlList.map((item, index) => (
             <li className="w-1/4 h-auto p-1" key={item}>
               <a className="hover:opacity-50" href={item} target="_blank">
-                <img className="object-cover max-h-32 w-full" src={item} />
+                <img className="object-cover max-h-32 w-full" src={item} alt="uploading file"/>
               </a>
             </li>
           ))}
