@@ -9,10 +9,9 @@ import {useEffect,useState} from "react";
 import { useCookies } from "react-cookie";
 import React from "react";
 import Icon from "./Icon";
-import Google from "./google";
 
 //onAuthChangeをuseEffectに挿入
-export default function Home() {
+export default function Google() {
   const auth = useSelector((state:any) => state.auth.isSignIn);
   const dispatch = useDispatch()
   const[user,setUser]= useState("")//ログイン情報を保持するステート
@@ -47,14 +46,14 @@ return () =>{
 };
   },[dispatch]);
 
-  const signInGitHub = async () => {
+  const signInGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'github'
+      provider: 'google'
     })
     if(error) throw new Error(error.message)
   }
 
-  const signOutGithub = async () => {
+  const signOutGoogle = async () => {
    try{ 
     const { error } = await supabase.auth.signOut()
     if(error) throw new Error(error.message)
@@ -74,16 +73,13 @@ return () =>{
   
     fetchAvatarUrl();
   }, [user]);
-
-  
-  return (
-  <div className="flex justify-center">
-    <button onClick={signInGitHub} className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg">githubでログイン</button>
-   <Google/>
+    return(
+        <div className="flex justify-center">
+    <button onClick={signInGoogle} className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">githubでログイン</button>
    {user?(
     <button 
-    onClick={signOutGithub} 
-    className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg">
+    onClick={signOutGoogle} 
+    className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">
       githubでログアウト
       </button>
       ) :(
@@ -95,6 +91,5 @@ return () =>{
         <div className="text-gray-500" color="green"><span>アイコンを取得してください</span></div>
     )}
     </div>
-  );
+    )
 }
-
