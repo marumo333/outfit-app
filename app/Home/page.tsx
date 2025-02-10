@@ -68,7 +68,7 @@ return () =>{
     if (!user) return; // user が null の場合は何もしない
   
     const fetchAvatarUrl = async () => {
-      const { data } = supabase.storage.from("avatars").getPublicUrl("skz.jpeg");
+      const { data } = supabase.storage.from("avatars").getPublicUrl("github.jpg");
       setAvatarUrl(data.publicUrl || "");
     };
   
@@ -77,9 +77,8 @@ return () =>{
 
   
   return (
-  <div className="flex justify-center">
+  <div className="flex flex-col items-center justify-center space-y-4 min-h-screen bg-gray-100">
     <button onClick={signInGitHub} className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg">githubでログイン</button>
-   <Google/>
    {user?(
     <button 
     onClick={signOutGithub} 
@@ -94,6 +93,7 @@ return () =>{
       <Icon url={avatarUrl}/>):(
         <div className="text-gray-500" color="green"><span>アイコンを取得してください</span></div>
     )}
+    <Google/>
     </div>
   );
 }

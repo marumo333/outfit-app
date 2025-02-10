@@ -67,20 +67,20 @@ return () =>{
     if (!user) return; // user が null の場合は何もしない
   
     const fetchAvatarUrl = async () => {
-      const { data } = supabase.storage.from("avatars").getPublicUrl("skz.jpeg");
+      const { data } = supabase.storage.from("avatars").getPublicUrl("google.jpg");
       setAvatarUrl(data.publicUrl || "");
     };
   
     fetchAvatarUrl();
   }, [user]);
     return(
-        <div className="flex justify-center">
-    <button onClick={signInGoogle} className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">githubでログイン</button>
+        <div className="flex flex-col items-center justify-center space-y-4 min-h-screen bg-gray-100">
+    <button onClick={signInGoogle} className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">googleでログイン</button>
    {user?(
     <button 
     onClick={signOutGoogle} 
     className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">
-      githubでログアウト
+      googleでログアウト
       </button>
       ) :(
         <div className="text-gray-500" color="blue"><p>ログイン情報を取得中:</p></div>
