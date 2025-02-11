@@ -57,6 +57,7 @@ return () =>{
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google'
     })
+    navigate("/private")
     if(error) throw new Error(error.message)
   }
 

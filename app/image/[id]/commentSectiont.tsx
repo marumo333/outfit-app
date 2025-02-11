@@ -5,25 +5,30 @@ import  {supabase}  from "@/utils/supabase/supabase";
 import { useSelector,useDispatch } from 'react-redux';
 import { signOut } from "@/app/authSlice";
 import {signIn} from "@/app/authSlice";
+import {User} from "@supabase/supabase-js"
 interface Comment {
   id: number;
   content: string;
   created_at: string;
+  user_id:string;
 }
 
 export   const CommentSection = ()=> {
+  const [user,setUser] =useState<User|null>(null);
   const [comment, setComment] = useState<string>('');
   const [comments, setComments] = useState<Comment[]>([]);
   const [selectId,setSelectId]=useState<number|null>(null);
   const auth = useSelector((state:any) => state.auth.isSignIn);
   const dispatch = useDispatch()
-  const[user,setUser]= useState("")//ログイン情報を保持するステート
+  const[account,setAccount]= useState("")//ログイン情報を保持するステート
+  //ログイン情報を取得
   useEffect(()=>{
       const{data:authListener} =supabase.auth.onAuthStateChange(
         (event,session)=>{
           console.log(event)
     if (session?.user) {
-      setUser(session.user.email||"GitHub User")
+      setUser(session.user)
+      setAccount(session.user.email||"GitHub User")
       dispatch(signIn({
         name: session.user.email, 
       iconUrl: "", 
@@ -36,7 +41,8 @@ export   const CommentSection = ()=> {
     if (event === 'SIGNED_OUT') {
       window.localStorage.removeItem('oauth_provider_token')
       window.localStorage.removeItem('oauth_provider_refresh_token')
-      setUser("")//user情報をリセット
+      setUser(null)
+      setAccount("")//user情報をリセット
       dispatch(signOut());
         }
     }
@@ -47,6 +53,7 @@ export   const CommentSection = ()=> {
   };
     },[dispatch]);
 
+    //コメントをフェッチ
   const fetchComments = async () => {
     const { data, error } = await supabase
       .from('comments')
@@ -57,20 +64,23 @@ export   const CommentSection = ()=> {
     else setComments(data||[]);
   };
 
+  //コメント情報を更新
   useEffect(() => {
-    const getComments= async()=>{
-      await fetchComments();
-    }
-    getComments();
+     fetchComments();
   }, []);
+  
 
   const handleCommentSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!comment.trim()) return;//無記名送信を避ける
+    if (!comment.trim()||!user){
+      alert("ログインしてください")
+      return;//無記名送信を避ける
+    } 
+
 
     const { data, error } = await supabase
       .from('comments')
-      .insert([{ content: comment }]);
+      .insert([{ content: comment ,user_id:user.id}]);
    
 
     if (error) console.error('Error submitting comment', error);
@@ -87,18 +97,31 @@ export   const CommentSection = ()=> {
   }
 
   const handleDelete=async()=>{
-   if(selectId===null) return
+   if(selectId===null|| !user) return
 
    try{
-    const {error} = await supabase
+    const {data:commentData,error:fetchError} = await supabase
     .from('comments')
-    .delete()
+    .select("user_id")
     .eq("id",selectId)//削除対象を特定
+    .single();
 
-if(error) throw new Error("削除エラー",error)
+  if(fetchError) throw new Error("削除エラー")
+
+    if(commentData?.user_id!==user.id){
+      alert("投稿主のみ自身の投稿の削除可能")
+      return;
+    }
+
+  const{error} =await supabase
+  .from("comments")
+  .delete()
+  .eq("id",selectId);
+
+  if(error) throw new Error ("削除エラー")
 
   // UI更新（削除後に再取得 or フィルタリング）
-  setComments(comments.filter(c => c.id !== selectId));
+  await fetchComments();
   setSelectId(null);
    }catch (error:any) {
     alert(error.message);
@@ -122,12 +145,11 @@ if(error) throw new Error("削除エラー",error)
       <div>
         {comments.map((comment) => (
           <div key={comment.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
-            <p>{comment.content}</p>
-            <p>{comment.created_at}</p>
+            <p className="text-blue-500">{comment.content}</p>
           </div>
         ))}
       </div>
-      {user?(
+      {account?(
         <><div>
           <select id="selectId" onChange={handleSelectChange}>
             {comments.map((comment) => (

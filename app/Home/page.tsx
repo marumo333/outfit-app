@@ -54,11 +54,13 @@ return () =>{
         navigate("/private")
       }
   },[user,navigate])
+
   const signInGitHub = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github'
     })
     if(error) throw new Error(error.message)
+      navigate("/private")
   }
 
   const signOutGithub = async () => {
