@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import  {supabase}  from "@/utils/supabase/supabase";
-
+import { useSelector,useDispatch } from 'react-redux';
+import { signOut } from "@/app/authSlice";
+import {signIn} from "@/app/authSlice";
 interface Comment {
   id: number;
   content: string;
@@ -13,6 +15,37 @@ export   const CommentSection = ()=> {
   const [comment, setComment] = useState<string>('');
   const [comments, setComments] = useState<Comment[]>([]);
   const [selectId,setSelectId]=useState<number|null>(null);
+  const auth = useSelector((state:any) => state.auth.isSignIn);
+  const dispatch = useDispatch()
+  const[user,setUser]= useState("")//ログイン情報を保持するステート
+  useEffect(()=>{
+      const{data:authListener} =supabase.auth.onAuthStateChange(
+        (event,session)=>{
+          console.log(event)
+    if (session?.user) {
+      setUser(session.user.email||"GitHub User")
+      dispatch(signIn({
+        name: session.user.email, 
+      iconUrl: "", 
+      token: session.provider_token 
+      }))
+      window.localStorage.setItem('oauth_provider_token', session.provider_token||"");
+      window.localStorage.setItem('oauth_provider_refresh_token', session.provider_refresh_token||"")
+    }
+  
+    if (event === 'SIGNED_OUT') {
+      window.localStorage.removeItem('oauth_provider_token')
+      window.localStorage.removeItem('oauth_provider_refresh_token')
+      setUser("")//user情報をリセット
+      dispatch(signOut());
+        }
+    }
+  );
+  //クリーンアップ処理追加（リスナー削除）
+  return () =>{
+    authListener?.subscription.unsubscribe();
+  };
+    },[dispatch]);
 
   const fetchComments = async () => {
     const { data, error } = await supabase
@@ -90,29 +123,34 @@ if(error) throw new Error("削除エラー",error)
         {comments.map((comment) => (
           <div key={comment.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
             <p>{comment.content}</p>
+            <p>{comment.created_at}</p>
           </div>
         ))}
       </div>
-      <div>
-          <select id="selectId"  onChange={handleSelectChange}>
-          {comments.map((comment) => (
-          <option
-          key={comment.id} 
-          value={comment.id}
-          style={{ border: '1px solid #ccc', 
-          padding: '10px', 
-          margin: '10px 0' }}
-          >
-            {comment.content}
-          </option>
-           ))}
+      {user?(
+        <><div>
+          <select id="selectId" onChange={handleSelectChange}>
+            {comments.map((comment) => (
+              <option
+                key={comment.id}
+                value={comment.id}
+                style={{
+                  border: '1px solid #ccc',
+                  padding: '10px',
+                  margin: '10px 0'
+                }}
+              >
+                {comment.content}
+              </option>
+            ))}
           </select>
-      </div>
-      <p onClick={handleDelete}
-      className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0"
-      >
-      選択中のコメントを削除
-      </p>
+        </div><p onClick={handleDelete}
+          className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0"
+        >
+            選択中のコメントを削除
+          </p></>):(
+        <p>ログインしてくだいさい</p>
+      )}
     </div>
   );
 };
