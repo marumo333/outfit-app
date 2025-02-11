@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { use } from "react";
+import React, { useEffect, useState,use } from "react";
 import  {supabase}  from "@/utils/supabase/supabase";
 import CommentSection from "./commentSectiont"
 
@@ -13,7 +12,7 @@ interface ImageItem {
 
 
 export default function Image({params}:{params:Promise<{id:string}>}) {
-  const unwrapParams = use(params);
+  const resolvedParams = use(params);
   const [imageDetail, setImageDetail] = useState<ImageItem | null>(null);
   const [loading, setLoading] = useState(false);
   
@@ -44,10 +43,10 @@ export default function Image({params}:{params:Promise<{id:string}>}) {
   };
 
   useEffect(() => {
-    if(unwrapParams.id){
-      fetchImage(unwrapParams.id);
+    if(resolvedParams.id){
+      fetchImage(resolvedParams.id);
     }
-  },[unwrapParams.id]);
+  },[resolvedParams.id]);
 
   const handleDelete=async(imageName: string)=>{
     try {
@@ -109,7 +108,7 @@ export default function Image({params}:{params:Promise<{id:string}>}) {
           ダウンロード
         </a>
         <div className="flex justify-center">
-          <button onClick={() => handleDelete(unwrapParams.id)}
+          <button onClick={() => handleDelete(resolvedParams.id)}
           className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg"
           >投稿の削除</button>
         </div>
