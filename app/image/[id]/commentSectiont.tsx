@@ -133,10 +133,16 @@ export   const CommentSection = ()=> {
       <form onSubmit={handleCommentSubmit}>
         <textarea
           value={comment}
+          id="comment"
+          name="comment"
           onChange={(e) => setComment(e.target.value)}
           placeholder="Write a comment..."
         />
-        <button className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0" type="submit">コメント投稿</button>
+        <button className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0" 
+        type="submit"
+        id="submitComment"
+        name="subamitComment"
+        >コメント投稿</button>
       </form>
       <div>
         <p>コメント一覧</p>
@@ -151,7 +157,7 @@ export   const CommentSection = ()=> {
       </div>
       {account?(
         <><div>
-          <select id="selectId" onChange={handleSelectChange}>
+          <select id="selectId" name="selectId" onChange={handleSelectChange}>
             {comments.map((comment) => (
               <option
                 key={comment.id}
