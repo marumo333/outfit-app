@@ -76,8 +76,6 @@ export   const CommentSection = ()=> {
       alert("ログインしてください")
       return;//無記名送信を避ける
     } 
-
-
     const { data, error } = await supabase
       .from('comments')
       .insert([{ content: comment ,user_id:user.id}]);
@@ -87,10 +85,11 @@ export   const CommentSection = ()=> {
     else {
       setComment('');
     }
-    if(data){
-      setComments([data[0],...comments]);//追加するコメントを先頭に配置
-    }
+      setComment("")//入力欄リセット
+    await fetchComments();//コメントを再取得
   };
+
+ 
 
   const handleSelectChange=(event:React.ChangeEvent<HTMLSelectElement>)=>{
     setSelectId(Number(event.target.value))
@@ -146,6 +145,7 @@ export   const CommentSection = ()=> {
         {comments.map((comment) => (
           <div key={comment.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
             <p className="text-blue-500">{comment.content}</p>
+            <p>user-id:{comment.user_id}</p>
           </div>
         ))}
       </div>
