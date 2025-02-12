@@ -11,6 +11,7 @@ import React from "react";
 import Icon from "./Icon";
 import Google from "./google";
 import {useNavigate} from "react-router-dom";
+import GuestLogin from "./guestLogin"
 
 //onAuthChangeをuseEffectに挿入
 export default function Home() {
@@ -87,6 +88,7 @@ return () =>{
   
   return (
   <div className="flex flex-col items-center justify-center space-y-4 min-h-screen bg-gray-100">
+    <GuestLogin/>
     <button onClick={signInGitHub} className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg">githubでログイン</button>
    {user?(
     <button 
