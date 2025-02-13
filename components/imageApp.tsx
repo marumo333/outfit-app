@@ -6,6 +6,7 @@ import { v4 as uuid4 } from "uuid";
 import Link from "next/link"
 import {useDispatch} from "react-redux";
 import React from "react";
+import {  useSelector } from "react-redux";
 
 interface ImageItem{
   name:string,//画像名
@@ -15,9 +16,16 @@ export default function ImageApp() {
   const [urlList, setUrlList] = useState<ImageItem[]>([]);
   const [loadingState, setLoadingState] = useState("hidden");
   const [file, setFile] = useState<File | undefined>();
-  
-  const dispatch = useDispatch();
+  const auth = useSelector((state:any) => state.auth.isSignIn);
+    const [isClient,setIsClient] = useState(false);
+    const dispatch = useDispatch();
 
+    useEffect(()=>{
+        setIsClient(true);
+      },[])
+      if(!isClient){
+        return<h1>読み込みちゅう....</h1>
+      }
   const listAllImage = async () => {
     setLoadingState("flex justify-center");
     const tempUrlList: ImageItem[] = [];
@@ -98,6 +106,8 @@ export default function ImageApp() {
 
   return (
     <>
+    {auth?(
+      <>
       <form className="mb-4 text-center" onSubmit={onSubmit}>
         <input
           className="relative mb-4 block w-full rounded border border-neutral-300 px-3 py-2 text-base file:border-none file:bg-neutral-100 file:mr-2 file:py-1 file:px-3 hover:file:bg-neutral-200"
@@ -114,6 +124,15 @@ export default function ImageApp() {
           送信
         </button>
       </form>
+      </>
+      ):(
+        <div>
+          <p>
+            アカウントで作成してください
+          </p>
+          </div>
+      )}
+      
 
       <div className={loadingState} aria-label="読み込み中">
         <div className="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>
