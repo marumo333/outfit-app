@@ -9,7 +9,7 @@ import {useEffect,useState} from "react";
 import { useCookies } from "react-cookie";
 import React from "react";
 import Icon from "./Icon";
-import {useNavigate} from "react-router-dom";
+import {useRouter} from "next/navigation";
 
 //onAuthChangeをuseEffectに挿入
 export default function Google() {
@@ -18,7 +18,7 @@ export default function Google() {
   const[user,setUser]= useState("")//ログイン情報を保持するステート
   const [cookies] = useCookies()
   const [avatarUrl, setAvatarUrl] = useState<string>(""); // URLを保存する状態
-  const navigate =useNavigate();
+  const router =useRouter();
   useEffect(()=>{
     const{data:authListener} =supabase.auth.onAuthStateChange(
       (event,session)=>{
@@ -47,17 +47,18 @@ return () =>{
   authListener?.subscription.unsubscribe();
 };
   },[dispatch]);
+  
   useEffect(()=>{
         if(user){
-          navigate("/private")
+          router.push("/private")
         }
-    },[user,navigate])
+    },[user,router])
 
   const signInGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google'
     })
-    navigate("/private")
+    router.push("/private")
     if(error) throw new Error(error.message)
   }
 

@@ -1,19 +1,17 @@
+"use client"
 import NextAuth from 'next-auth';
 import Providers from 'next-auth/providers';
-import { useNavigate } from 'react-router-dom';
+import { useRouter} from 'next/navigation';
+import Link from "next/link"
 
 
 export default function(){
-    const navigate = useNavigate();
-    const guestSignIn=()=>{
-        navigate("/Home")
-    }
 
     return(
         <>
-        <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg" onClick={guestSignIn}>
+        <Link className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg" href="/Index">
             ゲストログイン
-            </button>
+            </Link>
         </>
     )
 }

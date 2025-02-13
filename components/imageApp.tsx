@@ -20,12 +20,6 @@ export default function ImageApp() {
     const [isClient,setIsClient] = useState(false);
     const dispatch = useDispatch();
 
-    useEffect(()=>{
-        setIsClient(true);
-      },[])
-      if(!isClient){
-        return<h1>読み込みちゅう....</h1>
-      }
   const listAllImage = async () => {
     setLoadingState("flex justify-center");
     const tempUrlList: ImageItem[] = [];
@@ -103,7 +97,12 @@ export default function ImageApp() {
       await listAllImage();
     })();
   }, []);
-
+  useEffect(()=>{
+    setIsClient(true);
+  },[])
+  if(!isClient){
+    return<h1>読み込みちゅう....</h1>
+  }
   return (
     <>
     {auth?(
