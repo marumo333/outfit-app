@@ -127,7 +127,7 @@ export default function ImageApp() {
       ):(
         <div>
           <p>
-            アカウントで作成してください
+            アカウントでログインしてください
           </p>
           </div>
       )}
