@@ -14,13 +14,18 @@ export default function Header() {
 
                 <li>
                     <Link className="text-gray-900 hover:text-blue-500 transition-colors duration-200" href="/private">
-                        機能性重視の服（プライベート画像）
+                        オシャレ着投稿（プライベート画像）
                     </Link>
                 </li>
 
                 <li>
                     <Link className="text-gray-900 hover:text-blue-500 transition-colors duration-200" href="/logout">
                         ログアウト
+                    </Link>
+                </li>
+                <li>
+                    <Link className="text-gray-900 hover:text-blue-500 transition-colors duration-200" href="/search">
+                    気になる服の画像検索
                     </Link>
                 </li>
             </ul>

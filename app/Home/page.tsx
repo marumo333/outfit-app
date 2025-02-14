@@ -13,6 +13,7 @@ import Google from "./google";
 import { useRouter } from "next/navigation";
 import GuestLogin from "./guestLogin"
 
+
 //onAuthChangeをuseEffectに挿入
 export default function Home() {
   const auth = useSelector((state: any) => state.auth.isSignIn);
