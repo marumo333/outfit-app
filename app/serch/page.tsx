@@ -2,6 +2,7 @@
 import React,{useState,useEffect} from "react";
 import { supabase } from "@/utils/supabase/supabase";
 import Head from "next/head";
+import {debounce} from "lodash";
 
 interface ImageItem{
     id:number,
@@ -10,12 +11,15 @@ interface ImageItem{
     content:string,
 }
 
-export default function Serach(){
+export default function Serch(){
     const [posts,setPosts] = useState<ImageItem[]>([]);
     const [keyword,setKeyword] = useState("");
 
     useEffect(()=>{
-        fetchPosts();
+        const fetchData= async()=>{
+            await fetchPosts();
+        }
+        fetchData();
     },[])
 
     async function fetchPosts(){
@@ -23,12 +27,12 @@ export default function Serach(){
         setPosts(data||[]);
     };
 
-    const search = async(value:string) =>{
+    const serch = async(value:string) =>{
         if(value!==""){
             const {data:posts,error} = await supabase
             .from("outfit-app")
             .select()
-            .textSearch("title", `%${value}%`);
+            .ilike("title", `%${value}%`);
             if(error) throw  error ;
             setPosts(posts)
             return;
@@ -36,9 +40,15 @@ export default function Serach(){
             await fetchPosts();
         }
         };
+
+        const debounceSerch=debounce((value:string)=>{
+            serch(value);
+        },300)
+
         const handleChange = async(e:React.ChangeEvent<HTMLElement>)=>{
-            setKeyword((e.target as HTMLInputElement).value);
-            search((e.target as HTMLInputElement).value);
+            const value =(e.target as HTMLInputElement).value
+            setKeyword(value);
+            debounceSerch(value);
         }
         return(
             <>
