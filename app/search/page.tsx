@@ -31,7 +31,10 @@ export default function Serach(){
             await fetchPosts();
         }
         };
-
+        const handleChange = async(e:React.ChangeEvent<HTMLElement>)=>{
+            setKeyword(e.target.value);
+            search(e.target.value);
+        }
         return(
             <>
             </>
