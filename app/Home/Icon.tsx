@@ -1,6 +1,6 @@
 "use client"
 import Image from "next/image";
-import React,{ FC } from "react";
+import React, { FC } from "react";
 
 type Props = {
   url: string;
@@ -15,7 +15,7 @@ const Icon: FC<Props> = ({ url }) => {
           alt="Avatar"
           fill
           style={{ objectFit: "cover" }} // 画像を適切に調整
-          unoptimized={true} 
+          unoptimized={true}
         />
       ) : (
         <div style={{ width: "100%", height: "100%", background: "gray" }} />

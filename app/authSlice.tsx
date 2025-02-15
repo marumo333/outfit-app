@@ -18,10 +18,11 @@ export const authSlice = createSlice({
       state.isSignIn = true;
       state.name = action.payload.name;
       state.iconUrl = action.payload.iconUrl;
-      cookie.set("token", action.payload.token, { 
+      cookie.set("token", action.payload.token, {
         path: '/',
-      secure:true,//http接続時のみ送信
-    sameSite:"strict", }); //CSRF対策
+        secure: true,//http接続時のみ送信
+        sameSite: "strict",
+      }); //CSRF対策
     },
     signOut: (state) => {
       state.isSignIn = false;
@@ -34,9 +35,9 @@ export const authSlice = createSlice({
 
 export const { signIn, signOut } = authSlice.actions;
 
-export const selectAuth = (state:any) => state.auth; // セレクタを追加
-export const selectIsSignIn = (state:any) => state.auth.isSignIn;
-export const selectUserName = (state:any) => state.auth.name;
-export const selectUserIconUrl = (state:any) => state.auth.iconUrl;
+export const selectAuth = (state: any) => state.auth; // セレクタを追加
+export const selectIsSignIn = (state: any) => state.auth.isSignIn;
+export const selectUserName = (state: any) => state.auth.name;
+export const selectUserIconUrl = (state: any) => state.auth.iconUrl;
 
 export default authSlice.reducer; // reducer をエクスポート

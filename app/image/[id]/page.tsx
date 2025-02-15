@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState,use } from "react";
-import  {supabase}  from "@/utils/supabase/supabase";
+import React, { useEffect, useState, use } from "react";
+import { supabase } from "@/utils/supabase/supabase";
 import CommentSection from "./commentSectiont"
 
 
@@ -11,11 +11,11 @@ interface ImageItem {
 }
 
 
-export default function Image({params}:{params:Promise<{id:string}>}) {
+export default function Image({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const [imageDetail, setImageDetail] = useState<ImageItem | null>(null);
   const [loading, setLoading] = useState(false);
-  
+
 
   const fetchImage = async (imageName: string) => {
     setLoading(true);
@@ -43,35 +43,35 @@ export default function Image({params}:{params:Promise<{id:string}>}) {
   };
 
   useEffect(() => {
-    if(resolvedParams.id){
+    if (resolvedParams.id) {
       fetchImage(resolvedParams.id);
     }
-  },[resolvedParams.id]);
+  }, [resolvedParams.id]);
 
-  const handleDelete=async(imageName: string)=>{
+  const handleDelete = async (imageName: string) => {
     try {
       const filePath = `img/${imageName}`;
-      const {error} = await supabase.storage
-      .from("outfit-image")
-      .remove([filePath])
+      const { error } = await supabase.storage
+        .from("outfit-image")
+        .remove([filePath])
 
-      if(error) throw new Error (`削除エラー${error.message}`)
+      if (error) throw new Error(`削除エラー${error.message}`)
 
-        alert("画像を削除しました")
+      alert("画像を削除しました")
       setImageDetail(null);
-    } catch (error:any) {
+    } catch (error: any) {
       alert(error.message);
     }
   }
-  
-  useEffect(()=>{
-    (async ()=>{
+
+  useEffect(() => {
+    (async () => {
       const resolvedParams = await params;
-      if(resolvedParams.id){
+      if (resolvedParams.id) {
         fetchImage(resolvedParams.id)
       }
     })();
-  },[params])
+  }, [params])
 
   if (loading) {
     return (
@@ -109,12 +109,12 @@ export default function Image({params}:{params:Promise<{id:string}>}) {
         </a>
         <div className="flex justify-center">
           <button onClick={() => handleDelete(resolvedParams.id)}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg"
+            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg"
           >投稿の削除</button>
         </div>
       </div>
       <CommentSection />
     </div>
-    
+
   );
 }

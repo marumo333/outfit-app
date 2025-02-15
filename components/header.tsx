@@ -25,7 +25,7 @@ export default function Header() {
                 </li>
                 <li>
                     <Link className="text-gray-900 hover:text-blue-500 transition-colors duration-200" href="/serch">
-                    気になる服の画像検索
+                        気になる服の画像検索
                     </Link>
                 </li>
             </ul>
