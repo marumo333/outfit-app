@@ -11,7 +11,6 @@ export default function Redirect(){
   const dispatch = useDispatch()
   const [user, setUser] = useState("")//ログイン情報を保持するステート
   const [cookies] = useCookies()
-    const [avatarUrl, setAvatarUrl] = useState<string>(""); // URLを保存する状態
     
 
     useEffect(() => {
@@ -19,11 +18,14 @@ export default function Redirect(){
         (event, session) => {
           console.log(event)
           if (session?.user) {
-            setUser(session.user.email || "GitHub User")
+            setUser(session.user.email || "Login User")
             dispatch(signIn({
               name: session.user.email,
               iconUrl: "",
-              token: session.provider_token
+              token: session.provider_token,
+              options: {
+                redirectTo: `http://localhost:3000/private`,
+              },
             }))
             window.localStorage.setItem('oauth_provider_token', session.provider_token || "");
             window.localStorage.setItem('oauth_provider_refresh_token', session.provider_refresh_token || "")
@@ -43,7 +45,6 @@ export default function Redirect(){
       };
     }, [dispatch]);
     return(
-        <>
-        </>
+        <div>Homeページに移動しています。</div>
     )
 }
