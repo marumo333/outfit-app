@@ -59,7 +59,10 @@ export default function Home() {
 
   const signInGitHub = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'github'
+      provider: 'github',
+      options: {
+        redirectTo: `http://localhost:3000/redirect`,
+      },
     })
     if (error) throw new Error(error.message)
     router.push("/private")

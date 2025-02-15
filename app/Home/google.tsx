@@ -56,7 +56,10 @@ return () =>{
 
   const signInGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google'
+      provider: 'google',
+      options: {
+        redirectTo: `http://localhost:3000/redirect`,
+      },
     })
     router.push("/private")
     if(error) throw new Error(error.message)
