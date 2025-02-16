@@ -11,7 +11,7 @@ interface ImageItem {
   content: string,
 }
 
-export default function Serch() {
+export default function Search() {
   const [posts, setPosts] = useState<ImageItem[]>([]);
   const [keyword, setKeyword] = useState("");
 
@@ -23,32 +23,36 @@ export default function Serch() {
   }, [])
 
   async function fetchPosts() {
-    const { data } = await supabase.from("outfit-app").select("*");
+    const { data } = await supabase
+    .from("outfit-app")
+    .select("*");
     setPosts(data || []);
   };
 
-  const serch = async (value: string) => {
+  const search = async (value: string) => {
     if (value !== "") {
       const { data: posts, error } = await supabase
         .from("outfit-app")
         .select()
         .ilike("title", `%${value}%`);
-      if (error) throw error;
-      setPosts(posts)
+      if (error){
+        console.error("検索エラー",error.message);
+      }
+      setPosts(posts||[])
       return;
     } else {
       await fetchPosts();
     }
   };
 
-  const debounceSerch = debounce((value: string) => {
-    serch(value);
+  const debounceSearch = debounce((value: string) => {
+    search(value);
   }, 300)
 
   const handleChange = async (e: React.ChangeEvent<HTMLElement>) => {
     const value = (e.target as HTMLInputElement).value
     setKeyword(value);
-    debounceSerch(value);
+    debounceSearch(value);
   }
   return (
     <>
@@ -75,7 +79,7 @@ export default function Serch() {
                 </li>
                 {posts.map((post) => (
                   <li key={post.id} className="py-2 border-b last:border-none">
-                    <p>{post.created_at.substr(0, 10)}</p>
+                    <p>{new Date(post.created_at).toLocaleDateString()}</p>
                     <p className="font-semibold">{post.title}</p>
                     <p>{post.content}</p>
                   </li>
