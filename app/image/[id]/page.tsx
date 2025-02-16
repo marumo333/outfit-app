@@ -23,7 +23,7 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
     console.log("ファイルパス:", filePath);
 
     const { data: signedData, error } = await supabase.storage
-      .from("outfit-image")
+      .from("outfit_image")
       .createSignedUrl(filePath, 300);
 
 
@@ -52,7 +52,7 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
     try {
       const filePath = `img/${imageName}`;
       const { error } = await supabase.storage
-        .from("outfit-image")
+        .from("outfit_image")
         .remove([filePath])
 
       if (error) throw new Error(`削除エラー${error.message}`)
