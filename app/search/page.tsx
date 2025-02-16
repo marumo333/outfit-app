@@ -67,7 +67,7 @@ export default function Search() {
       const { data: posts, error } = await supabase
         .from("outfit_image")
         .select()
-        .ilike("title", `%${value}%`);
+        .ilike("name", `%${value}%`);
       if (error) {
         console.error("検索エラー", error.message);
       }
@@ -87,6 +87,15 @@ export default function Search() {
     setKeyword(value);
     debounceSearch(value);
   }
+
+  const [isClient, setIsClient] = useState(false);
+  
+    useEffect(() => {
+      setIsClient(true);
+    }, [])
+    if (!isClient) {
+      return <h1>読み込み中....</h1>
+    }
   return (
     <>
     {auth?(<>
