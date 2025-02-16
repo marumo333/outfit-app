@@ -57,7 +57,7 @@ export default function Search() {
 
   async function fetchPosts() {
     const { data } = await supabase
-      .from("outfit_image")
+      .from("outfit-image")
       .select("*");
     setPosts(data || []);
   };
@@ -65,7 +65,7 @@ export default function Search() {
   const search = async (value: string) => {
     if (value !== "") {
       const { data: posts, error } = await supabase
-        .from("outfit_image")
+        .from("outfit-image")
         .select()
         .ilike("name", `%${value}%`);
       if (error) {

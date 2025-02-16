@@ -26,7 +26,7 @@ export default function ImageApp() {
     const tempUrlList: ImageItem[] = [];
 
     const { data, error } = await supabase.storage
-      .from("outfit-image")
+      .from("outfit_image")
       .list("img", {
         limit: 100,
         offset: 0,
@@ -45,7 +45,7 @@ export default function ImageApp() {
       if (file.name !== ".emptyFolderPlaceholder") {
         const filePath = `img/${file.name}`;
         const { data: signedData, error: signedError } = await supabase.storage
-          .from("outfit-image")
+          .from("outfit_image")
           .createSignedUrl(filePath, 300);
 
         if (signedError) {
@@ -77,7 +77,7 @@ export default function ImageApp() {
     if (file && file.type.match("image.*")) {
       const fileExtension = file.name.split(".").pop();
       const { error } = await supabase.storage
-        .from("outfit-image")
+        .from("outfit_image")
         .upload(`img/${uuid4()}.${fileExtension}`, file);
 
       if (error) {

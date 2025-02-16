@@ -10,7 +10,7 @@ export default function PrivateImageApp() {
     const tempUrlList: string[] = []
     setLoadingState("flex justify-center")
     const { data, error } = await supabase.storage
-      .from('outfit-image')
+      .from('outfit_image')
       .list("img", {
         limit: 100,
         offset: 0,
@@ -58,7 +58,7 @@ export default function PrivateImageApp() {
     if (file!!.type.match("image.*")) {
       const fileExtension = file!!.name.split(".").pop()
       const { error } = await supabase.storage
-        .from('outfit-image')
+        .from('outfit_image')
         .upload(`img/${uuidv4()}.${fileExtension}`, file!!)
       if (error) {
         alert("エラーが発生しました：" + error.message)
