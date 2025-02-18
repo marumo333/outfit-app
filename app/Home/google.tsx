@@ -77,7 +77,7 @@ export default function Google() {
   }
 
   useEffect(() => {
-    if (!user) return; // user が null の場合は何もしない
+    
 
     const fetchAvatarUrl = async () => {
       const { data } = supabase.storage.from("avatars").getPublicUrl("google.jpg");
@@ -85,7 +85,7 @@ export default function Google() {
     };
 
     fetchAvatarUrl();
-  }, [user]);
+  }, []);
   return (
     <div className="flex flex-col items-center justify-center space-y-4 min-h-screen bg-gray-100">
       <button onClick={signInGoogle} className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">googleでログイン</button>
@@ -99,10 +99,8 @@ export default function Google() {
         <div className="text-gray-500" color="blue"><p>ログイン情報を取得中:</p></div>
       )
       }
-      {user ? (
-        <Icon url={avatarUrl} />) : (
-        <div className="text-gray-500" color="green"><span>アイコンを取得してください</span></div>
-      )}
+        <Icon url={avatarUrl} />
+        <div className="text-gray-500" color="green"><span>ログインしてください</span></div>
     </div>
   )
 }

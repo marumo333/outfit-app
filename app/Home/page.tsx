@@ -81,7 +81,7 @@ export default function Home() {
   }
 
   useEffect(() => {
-    if (!user) return; // user が null の場合は何もしない
+    
 
     const fetchAvatarUrl = async () => {
       const { data } = supabase.storage.from("avatars").getPublicUrl("github.jpg");
@@ -89,7 +89,7 @@ export default function Home() {
     };
 
     fetchAvatarUrl();
-  }, [user]);
+  }, []);
 
 
   return (
@@ -106,10 +106,9 @@ export default function Home() {
         <div className="text-gray-500" color="blue"><p>ログイン情報を取得中:</p></div>
       )
       }
-      {user ? (
-        <Icon url={avatarUrl} />) : (
-        <div className="text-gray-500" color="green"><span>アイコンを取得してください</span></div>
-      )}
+        <Icon url={avatarUrl} />
+        <div className="text-gray-500" color="green"><span>ログインしてください</span></div>
+      
       <Google />
       <X/>
     </div>
