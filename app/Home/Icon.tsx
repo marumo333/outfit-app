@@ -16,6 +16,7 @@ const Icon: FC<Props> = ({ url }) => {
           fill
           style={{ objectFit: "cover" }} // 画像を適切に調整
           unoptimized={true}
+          priority
         />
       ) : (
         <div style={{ width: "100%", height: "100%", background: "gray" }} />
