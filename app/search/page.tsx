@@ -7,8 +7,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { signOut, signIn } from "../authSlice";
 
 interface ImageItem {
-  name: string,//画像名
-  url: string,//画像のURL
+  name: string,
+  url: string,
   created_at: string,
 }
 
@@ -66,7 +66,8 @@ export default function Search() {
       const { data: posts, error } = await supabase
         .from("outfit_image")
         .select("name,url,created_at")
-        .or(`name.ilike.%${value}%, url.ilike.%${value}%`);
+        .ilike("name", `%${value}%`);
+
 
       if (error) {
         console.error("検索エラー:", error.message);
@@ -122,18 +123,24 @@ export default function Search() {
                 <ul className="border border-gray-300 rounded p-4">
                   <li className="font-bold border-b border-gray-300 pb-2 mb-2">
                     <p>投稿日</p>
-                    <p>name</p>
-                    <p>URL</p>
+                    <p>タイトル</p>
+                    <p>画像</p>
                   </li>
                   {posts.map((post) => (
                     <li key={post.name} className="py-2 border-b last:border-none">
-                      <p>{new Date(post.url).toLocaleDateString()}</p>
-                      <p>{post.created_at}</p>
+                      <p>{new Date(post.created_at).toLocaleDateString()}</p>
                       <p className="font-semibold">{post.name}</p>
-                      <p>{post.url}</p>
+                      <img
+                        src={post.url || "https://example.com/default.jpg"}
+                        alt={post.name}
+                        className="max-w-full h-auto"
+                        onError={(e) => (e.currentTarget.src = "https://example.com/default.jpg")}
+                      />
                     </li>
                   ))}
+
                 </ul>
+
               </div>
             </div>
           </main>
