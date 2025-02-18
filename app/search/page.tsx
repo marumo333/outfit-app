@@ -65,7 +65,7 @@ export default function Search() {
     if (value !== "") {
       const { data: posts, error } = await supabase
         .from("outfit_image")
-        .select("name, url,created_at")
+        .select("name,url,created_at")
         .or(`name.ilike.%${value}%, url.ilike.%${value}%`);
 
       if (error) {
@@ -128,6 +128,7 @@ export default function Search() {
                   {posts.map((post) => (
                     <li key={post.name} className="py-2 border-b last:border-none">
                       <p>{new Date(post.url).toLocaleDateString()}</p>
+                      <p>{post.created_at}</p>
                       <p className="font-semibold">{post.name}</p>
                       <p>{post.url}</p>
                     </li>
