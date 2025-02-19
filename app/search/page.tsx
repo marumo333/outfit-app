@@ -65,9 +65,8 @@ export default function Search() {
     if (value !== "") {
       const { data: posts, error } = await supabase
         .from("outfit_image")
-        .select("name,url,created_at")
-        .ilike("name", `%${value}%`);
-
+        .select("*")
+      //.ilike("name,", `%${value}%`);
 
       if (error) {
         console.error("検索エラー:", error.message);
