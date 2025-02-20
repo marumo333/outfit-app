@@ -11,7 +11,6 @@ import React from "react";
 import Icon from "./Icon";
 import Google from "./google";
 import { useRouter } from "next/navigation";
-import X from "./x"
 import GuestLogin from "./guestLogin"
 
 
@@ -110,7 +109,6 @@ export default function Home() {
         <div className="text-gray-500" color="green"><span>ログインしてください</span></div>
       
       <Google />
-      <X/>
     </div>
   );
 }
