@@ -1,5 +1,5 @@
 "use client"
-import ImageApp from "@/components/imageApp";
+import PrivateImageApp from "@/components/privateImageApp";
 import React from "react";
 import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
@@ -24,7 +24,7 @@ export default function Private() {
             再度アクサスした場合はリロードボタンを押してください。
           </p>
           <div className="flex-1 w-full flex flex-col items-center">
-            <ImageApp />
+            <PrivateImageApp />
           </div>
         </>
       ) : (

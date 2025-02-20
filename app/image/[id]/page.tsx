@@ -6,59 +6,63 @@ import CommentSection from "./commentSectiont"
 
 
 interface ImageItem {
+  id: string; // 画像ID
   name: string; // 画像名
-  url: string;  // 画像の URL
-  title:string,
-  content:string,
+  url: string; // 画像のURL
+  title: string;
+  content: string;
 }
 
-
-export default function Image({ params }: { params: Promise<{ id: string }> }) {
+export default function Image({ params }: { params:Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const [imageDetail, setImageDetail] = useState<ImageItem | null>(null);
   const [loading, setLoading] = useState(false);
 
 
-  const fetchImage = async (imageName: string) => {
+  const fetchImage = async (imageId: string) => {
     setLoading(true);
-    const filePath = `img/${imageName}`;
-    console.log("ファイルパス:", filePath);
+    const { data, error } = await supabase
+      .from("outfit_image")
+      .select("id,name,image_url,title,content")
+      .eq("id",imageId)
+      .single();
 
-    const { data: signedData, error } = await supabase.storage
-      .from("outfit_images")
-      .createSignedUrl(filePath, 300);
-
-
-
-    if (error) {
+    if (error || !data) {
       console.error("画像取得エラー:", error.message);
       setLoading(false);
       return;
     }
-
-    if (signedData?.signedUrl) {
-      setImageDetail({ name: imageName, url: signedData.signedUrl ,title:"",content:""});
-    } else {
-      setImageDetail(null);
-    }
+      setImageDetail({
+        id: data.id,
+      name: data.name,
+      url: data.image_url, // DB に保存されている URL を直接使用
+      title: data.title || "タイトルなし",
+      content: data.content || "説明なし",
+      })
     setLoading(false);
   };
 
-  useEffect(() => {
-    if (resolvedParams.id) {
-      fetchImage(resolvedParams.id);
-    }
-  }, [resolvedParams.id]);
 
-  const handleDelete = async (imageName: string) => {
+  const handleDelete = async () => {
+    if (!imageDetail) return;
     try {
-      const filePath = `img/${imageName}`;
-      const { error } = await supabase.storage
-        .from("outfit_images")
+      const filePath = imageDetail.url.replace(
+        `https://tkkavdiinrmmeeghllrr.supabase.co/storage/v1/object/public/outfit_image/`,
+        ""
+      );
+      const { error:deleteError } = await supabase.storage
+        .from("outfit_image")
         .remove([filePath])
 
-      if (error) throw new Error(`削除エラー${error.message}`)
+      if (deleteError) throw new Error(`削除エラー${deleteError.message}`)
 
+        const {error:dbError} =await supabase
+        .from("outfit_image")
+        .delete()
+        .eq("id",imageDetail.id);
+
+        if (dbError) throw new Error(`データベース削除エラー:${dbError.message}`)
+          
       alert("画像を削除しました")
       setImageDetail(null);
     } catch (error: any) {
@@ -67,13 +71,10 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
   }
 
   useEffect(() => {
-    (async () => {
-      const resolvedParams = await params;
       if (resolvedParams.id) {
-        fetchImage(resolvedParams.id)
+        fetchImage(resolvedParams.id);
       }
-    })();
-  }, [params])
+  }, [resolvedParams.id])
 
   if (loading) {
     return (
@@ -93,9 +94,7 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl  mb-4">画像のURL:{imageDetail.name}</h1>
-      <p className="text-2xl  mb-4">{imageDetail.title}</p>
-      <p className="text-2xl  mb-4">{imageDetail.content}</p>
+      <h1 className="text-2xl  mb-4">画像名:{imageDetail.name}</h1>
       <div className="mb-4">
         <img
           src={imageDetail.url}
@@ -112,7 +111,7 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
           ダウンロード
         </a>
         <div className="flex justify-center">
-          <button onClick={() => handleDelete(resolvedParams.id)}
+          <button onClick={handleDelete}
             className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg"
           >投稿の削除</button>
         </div>
@@ -122,3 +121,5 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
 
   );
 }
+
+
