@@ -8,6 +8,8 @@ import CommentSection from "./commentSectiont"
 interface ImageItem {
   name: string; // 画像名
   url: string;  // 画像の URL
+  title:string,
+  content:string,
 }
 
 
@@ -23,7 +25,7 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
     console.log("ファイルパス:", filePath);
 
     const { data: signedData, error } = await supabase.storage
-      .from("outfit_image")
+      .from("outfit_images")
       .createSignedUrl(filePath, 300);
 
 
@@ -35,7 +37,7 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
     }
 
     if (signedData?.signedUrl) {
-      setImageDetail({ name: imageName, url: signedData.signedUrl });
+      setImageDetail({ name: imageName, url: signedData.signedUrl ,title:"",content:""});
     } else {
       setImageDetail(null);
     }
@@ -52,7 +54,7 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
     try {
       const filePath = `img/${imageName}`;
       const { error } = await supabase.storage
-        .from("outfit_image")
+        .from("outfit_images")
         .remove([filePath])
 
       if (error) throw new Error(`削除エラー${error.message}`)
@@ -92,6 +94,8 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
   return (
     <div className="p-4">
       <h1 className="text-2xl  mb-4">画像のURL:{imageDetail.name}</h1>
+      <p className="text-2xl  mb-4">{imageDetail.title}</p>
+      <p className="text-2xl  mb-4">{imageDetail.content}</p>
       <div className="mb-4">
         <img
           src={imageDetail.url}

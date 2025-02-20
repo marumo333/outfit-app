@@ -11,22 +11,23 @@ export default function PrivateImageApp() {
   const listAllImage = async () => {
     setLoadingState("flex justify-center")
 
-    const {data:userData,error:userError} = await supabase.auth.getUser();
-    if(userError|| userData?.user){
-      console.log("ユーザー情報を取得できません",userError);
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData?.user) {
+      console.log("ユーザー情報を取得できません", userError);
       return;
     }
+
     const { data, error } = await supabase
       .from('outfit_image')
-      .select("image_url")
-      .eq("user_id",userData.user.id)
-      .order("created_at",{ascending:false});
+      .select("image_url,title,content,id")
+      .eq("user_id", userData.user.id)
+      .order("created_at", { ascending: false });
 
     if (error) {
       console.log(error)
       return
     }
-    setUrlList(data.map(item=> item.image_url));
+    setUrlList(data.map((item:any) => item.image_url));
     setLoadingState("hidden");
   }
 
@@ -34,16 +35,16 @@ export default function PrivateImageApp() {
     listAllImage();
   }, [])
 
-const handleFileChange=(event:React.ChangeEvent<HTMLInputElement>)=>{
-  if (event.target.files && event.target.files.length > 0) {
-    setFile(event.target.files[0]);
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setFile(event.target.files[0]);
+    }
   }
-}
 
-  const handleSubmit = async (event:React.ChangeEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!file|| !file.type.match("image.*")) {
+    if (!file || !file.type.match("image.*")) {
       alert("画像ファイル以外はアップロード出来ません。")
       return;
     }
@@ -59,7 +60,7 @@ const handleFileChange=(event:React.ChangeEvent<HTMLInputElement>)=>{
 
     // Supabase Storage に画像をアップロード
     const { error: uploadError } = await supabase.storage
-      .from('outfit_image')
+      .from('outfit_images')
       .upload(filePath, file);
 
     if (uploadError) {
@@ -69,7 +70,7 @@ const handleFileChange=(event:React.ChangeEvent<HTMLInputElement>)=>{
 
     // Storage からサイン付きURLを作成
     const { data: signedUrlData, error: signedUrlError } = await supabase.storage
-      .from("outfit_image")
+      .from("outfit_images")
       .createSignedUrl(filePath, 300);
 
     if (signedUrlError) {
@@ -80,7 +81,13 @@ const handleFileChange=(event:React.ChangeEvent<HTMLInputElement>)=>{
     // Supabase の `outfit_image` テーブルに URL を保存
     const { error: insertError } = await supabase
       .from("outfit_image")
-      .insert([{ user_id: userId, image_url: signedUrlData.signedUrl }]);
+      .insert([{ 
+        user_id: userId, 
+        image_url: signedUrlData.signedUrl, 
+        title: "", 
+        content: "" 
+      }]
+    );
 
     if (insertError) {
       console.log("DB 挿入エラー:", insertError);
@@ -102,15 +109,15 @@ const handleFileChange=(event:React.ChangeEvent<HTMLInputElement>)=>{
           accept="image/*"
           onChange={handleFileChange}
         />
-        <button type="submit" 
-        disabled={!file} 
-        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:opacity-25">
+        <button type="submit"
+          disabled={!file}
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center disabled:opacity-25">
           送信
         </button>
       </form>
       <div className="w-full max-w-3xl">
-        <button onClick={listAllImage} 
-        className="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 ">リロード</button>
+        <button onClick={listAllImage}
+          className="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 ">リロード</button>
         <div className={loadingState} aria-label="読み込み中">
           <div className="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>
         </div>
