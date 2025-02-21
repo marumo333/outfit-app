@@ -9,14 +9,10 @@ import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import React from "react";
 import Icon from "./Icon";
-import Google from "./google";
-import X from "./X";
 import { useRouter } from "next/navigation";
-import GuestLogin from "./guestLogin"
-
 
 //onAuthChangeをuseEffectに挿入
-export default function Home() {
+export default function X() {
   const auth = useSelector((state: any) => state.auth.isSignIn);
   const dispatch = useDispatch()
   const [user, setUser] = useState("")//ログイン情報を保持するステート
@@ -28,7 +24,7 @@ export default function Home() {
       (event, session) => {
         console.log(event)
         if (session?.user) {
-          setUser(session.user.email || "GitHub User")
+          setUser(session.user.email || "X User")
           dispatch(signIn({
             name: session.user.email,
             iconUrl: "",
@@ -58,18 +54,18 @@ export default function Home() {
     }
   }, [user, router])
 
-  const signInGitHub = async () => {
+  const signInGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'github',
+      provider: 'twitter',
       options: {
         redirectTo: `http://localhost:3000/redirect`,
       },
     })
-    if (error) throw new Error(error.message)
     router.push("/private")
+    if (error) throw new Error(error.message)
   }
 
-  const signOutGithub = async () => {
+  const signOutGoogle = async () => {
     try {
       const { error } = await supabase.auth.signOut()
       if (error) throw new Error(error.message)
@@ -84,23 +80,20 @@ export default function Home() {
     
 
     const fetchAvatarUrl = async () => {
-      const { data } = supabase.storage.from("avatars").getPublicUrl("github.jpg");
+      const { data } = supabase.storage.from("avatars").getPublicUrl("x.jpg");
       setAvatarUrl(data.publicUrl || "");
     };
 
     fetchAvatarUrl();
   }, []);
-
-
   return (
     <div className="flex flex-col items-center justify-center space-y-4 min-h-screen bg-gray-100">
-      <GuestLogin />
-      <button onClick={signInGitHub} className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg">githubでログイン</button>
+      <button onClick={signInGoogle} className="bg-gray-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">Xでログイン</button>
       {user ? (
         <button
-          onClick={signOutGithub}
-          className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg">
-          githubでログアウト
+          onClick={signOutGoogle}
+          className="bg-gray-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">
+          Xでログアウト
         </button>
       ) : (
         <div className="text-gray-500" color="blue"><p>ログイン情報を取得中:</p></div>
@@ -108,10 +101,6 @@ export default function Home() {
       }
         <Icon url={avatarUrl} />
         <div className="text-gray-500" color="green"><span>ログインしてください</span></div>
-      
-      <Google />
-      <X/>
     </div>
-  );
+  )
 }
-
