@@ -69,7 +69,7 @@ export default function Search() {
       const { data: posts, error } = await supabase
         .from("outfit_image")
         .select("*")
-        .ilike("image_url", `%${value}%`);
+        .ilike("title", `%${value}%`);
 
       if (error) {
         console.error("検索エラー:", error.message);
@@ -110,7 +110,7 @@ export default function Search() {
           <main className="p-6">
             <div className="max-w-3xl mx-auto">
               <h1 className="text-2xl font-semibold mb-4">検索機能</h1>
-              <p>画像URL検索</p>
+              <p>タイトル検索</p>
               <div>
                 <input
                   type="text"
