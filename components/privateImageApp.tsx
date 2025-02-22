@@ -100,8 +100,8 @@ export default function ImageApp() {
           user_id: userId,
           name: fileName,
           image_url: publicUrl, // image_url に保存
-          title: "",
-          content: "",
+          title: title,
+          content: content,
         },
       ]);
 
@@ -126,12 +126,16 @@ export default function ImageApp() {
     return <h1>読み込み中....</h1>;
   }
 
-  function handleTitleChange(event: ChangeEvent<HTMLInputElement>): void {
-    setTitle(event.target.value)
+  function handleTitleChange(e: ChangeEvent<HTMLInputElement>): void {
+    if (e.target.value && e.target.value.length > 0) {
+      setTitle(e.target.value);
+    }
   }
 
-  const handleContentChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    setContent(event.target.value)
+  const handleContentChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    if (e.target.value && e.target.value.length > 0) {
+      setContent(e.target.value);
+    }
   }
   return (
     <>
@@ -142,17 +146,17 @@ export default function ImageApp() {
               type="text"
               id="formTitle"
               onChange={handleTitleChange}
-              value={title} 
               placeholder="タイトルを入力"
               className="mb-2 border rounded p-2 w-full"
+              value={title}
             />
             <input
               type="text"
               id="formContent"
               onChange={handleContentChange}
-              value={content} 
               placeholder="コンテンツを入力"
               className="mb-2 border rounded p-2 w-full"
+              value={content}
             />
             <input
               className="relative mb-4 block w-full rounded border border-neutral-300 px-3 py-2 text-base file:border-none file:bg-neutral-100 file:mr-2 file:py-1 file:px-3 hover:file:bg-neutral-200"
