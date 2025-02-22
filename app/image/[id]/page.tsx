@@ -13,7 +13,7 @@ interface ImageItem {
   content: string;
 }
 
-export default function Image({ params }: { params:Promise<{ id: string }> }) {
+export default function Image({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const [imageDetail, setImageDetail] = useState<ImageItem | null>(null);
   const [loading, setLoading] = useState(false);
@@ -24,7 +24,7 @@ export default function Image({ params }: { params:Promise<{ id: string }> }) {
     const { data, error } = await supabase
       .from("outfit_image")
       .select("id,name,image_url,title,content")
-      .eq("id",imageUrl)
+      .eq("id", imageUrl)
       .single();
 
     if (error || !data) {
@@ -32,13 +32,13 @@ export default function Image({ params }: { params:Promise<{ id: string }> }) {
       setLoading(false);
       return;
     }
-      setImageDetail({
-        id: data.id,
+    setImageDetail({
+      id: data.id,
       name: data.name,
       url: data.image_url, // DB に保存されている URL を直接使用
       title: data.title || "タイトルなし",
       content: data.content || "説明なし",
-      })
+    })
     setLoading(false);
   };
 
@@ -50,19 +50,19 @@ export default function Image({ params }: { params:Promise<{ id: string }> }) {
         `https://tkkavdiinrmmeeghllrr.supabase.co/storage/v1/object/public/outfit_image/`,
         ""
       );
-      const { error:deleteError } = await supabase.storage
+      const { error: deleteError } = await supabase.storage
         .from("outfit_image")
         .remove([filePath])
 
       if (deleteError) throw new Error(`削除エラー${deleteError.message}`)
 
-        const {error:dbError} =await supabase
+      const { error: dbError } = await supabase
         .from("outfit_image")
         .delete()
-        .eq("id",imageDetail.id);
+        .eq("id", imageDetail.id);
 
-        if (dbError) throw new Error(`データベース削除エラー:${dbError.message}`)
-          
+      if (dbError) throw new Error(`データベース削除エラー:${dbError.message}`)
+
       alert("画像を削除しました")
       setImageDetail(null);
     } catch (error: any) {
@@ -71,9 +71,9 @@ export default function Image({ params }: { params:Promise<{ id: string }> }) {
   }
 
   useEffect(() => {
-      if (resolvedParams.id) {
-        fetchImage(resolvedParams.id);
-      }
+    if (resolvedParams.id) {
+      fetchImage(resolvedParams.id);
+    }
   }, [resolvedParams.id])
 
   if (loading) {
@@ -94,30 +94,51 @@ export default function Image({ params }: { params:Promise<{ id: string }> }) {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl  mb-4">画像名:{imageDetail.name}</h1>
-      <div className="mb-4">
-        <img
-          src={imageDetail.url}
-          alt={imageDetail.name}
-          className="object-contain max-w-full max-h-[400px] rounded-lg shadow-md"
-        />
-      </div>
-      <div className="flex justify-center">
-        <a
-          href={imageDetail.url}
-          download={imageDetail.name}
-          className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg"
-        >
-          ダウンロード
-        </a>
-        <div className="flex justify-center">
-          <button onClick={handleDelete}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg"
-          >投稿の削除</button>
-        </div>
-      </div>
-      <CommentSection />
+      {imageDetail ? (
+        <>
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-gray-800 border-b pb-2 mb-4">
+              画像名: {imageDetail.name}
+            </h1>
+            <p className="text-xl font-semibold text-gray-800 mb-2">
+              タイトル：
+              <span className="font-normal text-gray-700">{imageDetail.title || "（なし）"}</span>
+            </p>
+            <p className="text-lg text-gray-700 leading-relaxed">
+              コンテンツ：
+              <span className="font-normal">{imageDetail.content || "（なし）"}</span>
+            </p>
+          </div>
+          <div className="mb-6">
+            <img
+              src={imageDetail.url}
+              alt={imageDetail.name}
+              className="object-contain max-w-full max-h-[400px] rounded-lg shadow-md"
+            />
+          </div>
+          <div className="flex justify-center gap-4">
+            <a
+              href={imageDetail.url}
+              download={imageDetail.name}
+              className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow-md"
+            >
+              ダウンロード
+            </a>
+
+            <button
+              onClick={handleDelete}
+              className="bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg shadow-md"
+            >
+              投稿の削除
+            </button>
+          </div>
+          <CommentSection />
+        </>
+      ) : (
+        <p className="text-center text-gray-500">画像の詳細を取得できませんでした。</p>
+      )}
     </div>
+
 
   );
 }
