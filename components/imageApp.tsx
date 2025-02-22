@@ -3,107 +3,127 @@
 import { supabase } from "@/utils/supabase/supabase";
 import { useEffect, useState } from "react";
 import { v4 as uuid4 } from "uuid";
-import Link from "next/link"
-import { useDispatch } from "react-redux";
-import React from "react";
+import Link from "next/link";
 import { useSelector } from "react-redux";
 
 interface ImageItem {
-  name: string,//画像名
-  url: string,//画像のURL
+  id: string;
+  name: string;
+  url: string;
+  title: string;
+  content: string;
 }
 
 export default function ImageApp() {
-  const [urlList, setUrlList] = useState<ImageItem[]>([]);
+  const [images, setImages] = useState<ImageItem[]>([]);
   const [loadingState, setLoadingState] = useState("hidden");
-  const [file, setFile] = useState<File | undefined>();
+  const [file, setFile] = useState<File | null>(null);
   const auth = useSelector((state: any) => state.auth.isSignIn);
   const [isClient, setIsClient] = useState(false);
-  const dispatch = useDispatch();
 
   const listAllImage = async () => {
     setLoadingState("flex justify-center");
-    const tempUrlList: ImageItem[] = [];
 
-    const { data, error } = await supabase.storage
+    const { data, error } = await supabase
       .from("outfit_image")
-      .list("img", {
-        limit: 100,
-        offset: 0,
-        sortBy: { column: "created_at", order: "desc" },
-      });
+      .select("id, name, image_url, title, content");
 
     if (error) {
-      console.error(error);
+      console.error("画像取得エラー:", error);
       setLoadingState("hidden");
       return;
     }
 
-    const fileList = data || [];
+    // image_url を url にマッピング
+    const formattedData: ImageItem[] = (data || []).map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      url: item.image_url, // ここで image_url を url にマッピング
+      title: item.title,
+      content: item.content,
+    }));
 
-    for (const file of fileList) {
-      if (file.name !== ".emptyFolderPlaceholder") {
-        const filePath = `img/${file.name}`;
-        const { data: signedData, error: signedError } = await supabase.storage
-          .from("outfit_image")
-          .createSignedUrl(filePath, 300);
-
-        if (signedError) {
-          console.error(signedError);
-          continue;
-        }
-
-        if (signedData?.signedUrl) {
-          tempUrlList.push({ name: file.name, url: signedData.signedUrl });
-        }
-      }
-    }
-
-    setUrlList(tempUrlList);
+    setImages(formattedData);
     setLoadingState("hidden");
   };
 
-  // Handle file change
+  // 画像ファイル選択時の処理
   const handleChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
     }
   };
 
-  // Handle form submission
+  // 画像アップロード処理
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (file && file.type.match("image.*")) {
-      const fileExtension = file.name.split(".").pop();
-      const { error } = await supabase.storage
-        .from("outfit_image")
-        .upload(`img/${uuid4()}.${fileExtension}`, file);
-
-      if (error) {
-        alert("エラーが発生しました: " + error.message);
-        return;
-      }
-
-      setFile(undefined);
-      await listAllImage();
-    } else {
+    if (!file || !file.type.match("image.*")) {
       alert("画像ファイル以外はアップロードできません。");
+      return;
     }
+
+    const { data: userData, error: userError } = await supabase.auth.getUser();
+    if (userError || !userData?.user) {
+      alert("ユーザー情報を取得できませんでした。");
+      return;
+    }
+
+    const userId = userData.user.id;
+    const fileName = `${uuid4()}.${file.name.split(".").pop()}`;
+    const filePath = `img/${fileName}`;
+
+    // 1. Supabase Storage に画像をアップロード
+    const { error: uploadError } = await supabase.storage
+      .from("outfit_image")
+      .upload(filePath, file);
+
+    if (uploadError) {
+      alert("アップロードに失敗しました：" + uploadError.message);
+      return;
+    }
+
+    // 2. 公開URLを取得
+    const { data: publicUrlData } = supabase.storage
+      .from("outfit_image")
+      .getPublicUrl(filePath);
+
+    const publicUrl = publicUrlData.publicUrl;
+
+    // 3. Supabase の outfit_image テーブルにデータを保存
+    const { error: insertError } = await supabase
+      .from("outfit_image")
+      .insert([
+        {
+          user_id: userId,
+          name: fileName,
+          image_url: publicUrl, // image_url に保存
+          title: "新しい投稿",
+          content: "投稿の説明",
+        },
+      ]);
+
+    if (insertError) {
+      console.error("DB 挿入エラー:", insertError);
+      return;
+    }
+
+    setFile(null);
+    await listAllImage();
   };
 
-  // Fetch image list on component mount
   useEffect(() => {
-    (async () => {
-      await listAllImage();
-    })();
+    listAllImage();
   }, []);
+
   useEffect(() => {
     setIsClient(true);
-  }, [])
+  }, []);
+
   if (!isClient) {
-    return <h1>読み込み中....</h1>
+    return <h1>読み込み中....</h1>;
   }
+
   return (
     <>
       {auth ? (
@@ -127,27 +147,23 @@ export default function ImageApp() {
         </>
       ) : (
         <div>
-          <p>
-            アカウントでログインしてください
-          </p>
+          <p>アカウントでログインしてください</p>
         </div>
       )}
-
 
       <div className={loadingState} aria-label="読み込み中">
         <div className="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>
       </div>
 
       <ul className="flex flex-wrap w-full">
-        {urlList.map((item) => (
-          <li className="w-1/4 h-auto p-1" key={item.name}>
+        {images.map((item) => (
+          <li className="w-1/4 h-auto p-1" key={item.id}>
             <a className="hover:opacity-50" href={item.url} target="_blank" rel="noopener noreferrer">
-              < img className="object-cover max-h-32 w-full" src={item.url} alt="item.name" />
+              <img className="object-cover max-h-32 w-full" src={item.url} alt={item.name} />
             </a>
-            <Link href={`/image/${encodeURIComponent(item.name)}`}>
+            <Link href={`/image/${encodeURIComponent(item.id)}`}>
               <span className="text-blue-500 underline hover:opacity-50">詳細を表示</span>
             </Link>
-
           </li>
         ))}
       </ul>

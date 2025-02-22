@@ -19,12 +19,12 @@ export default function Image({ params }: { params:Promise<{ id: string }> }) {
   const [loading, setLoading] = useState(false);
 
 
-  const fetchImage = async (imageId: string) => {
+  const fetchImage = async (imageUrl: string) => {
     setLoading(true);
     const { data, error } = await supabase
       .from("outfit_image")
       .select("id,name,image_url,title,content")
-      .eq("id",imageId)
+      .eq("id",imageUrl)
       .single();
 
     if (error || !data) {
