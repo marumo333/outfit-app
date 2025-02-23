@@ -12,12 +12,15 @@ interface ImageItem {
   url: string;
   title: string;
   content: string;
+  tag:string,
 }
+
 
 export default function ImageApp() {
   const [images, setImages] = useState<ImageItem[]>([]);
   const [title, setTitle] = useState<string>("")
   const [content, setContent] = useState<string>("");
+  const [tag,setTag] = useState<string>("");
   const [loadingState, setLoadingState] = useState("hidden");
   const [file, setFile] = useState<File | null>(null);
   const auth = useSelector((state: any) => state.auth.isSignIn);
@@ -28,7 +31,7 @@ export default function ImageApp() {
 
     const { data, error } = await supabase
       .from("outfit_image")
-      .select("id, name, image_url, title, content");
+      .select("id, name, image_url, title, content,tag");
 
     if (error) {
       console.error("画像取得エラー:", error);
@@ -40,9 +43,10 @@ export default function ImageApp() {
     const formattedData: ImageItem[] = (data || []).map((item: any) => ({
       id: item.id,
       name: item.name,
-      url: item.image_url, // ここで image_url を url にマッピング
+      url: item.image_url, 
       title: item.title,
       content: item.content,
+      tag:item.tag,
     }));
 
     setImages(formattedData);
@@ -102,6 +106,7 @@ export default function ImageApp() {
           image_url: publicUrl, // image_url に保存
           title: title,
           content: content,
+          tag:tag,
         },
       ]);
 
@@ -137,6 +142,12 @@ export default function ImageApp() {
       setContent(e.target.value);
     }
   }
+
+  const handleTagChange = (e:ChangeEvent<HTMLInputElement>):void=>{
+    if(e.target.value&& e.target.value.length > 0){
+      setTag(e.target.value);
+    }
+  }
   return (
     <>
       {auth ? (
@@ -157,6 +168,14 @@ export default function ImageApp() {
               placeholder="コンテンツを入力"
               className="mb-2 border rounded p-2 w-full"
               value={content}
+            />
+            <input
+              type="text"
+              id="formTag"
+              onChange={handleTagChange}
+              placeholder="タグ付け"
+              className="mb-2 border rounded p-2 w-full"
+              value={tag}
             />
             <input
               className="relative mb-4 block w-full rounded border border-neutral-300 px-3 py-2 text-base file:border-none file:bg-neutral-100 file:mr-2 file:py-1 file:px-3 hover:file:bg-neutral-200"
