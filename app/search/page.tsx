@@ -15,6 +15,12 @@ interface ImageItem {
   content:string,
 }
 
+ type HashTag={
+  id:number,
+  tag:string,
+  created_at:string,
+ }
+
 export default function Search() {
   const auth = useSelector((state: any) => state.auth.isSignIn);
   const dispatch = useDispatch()
