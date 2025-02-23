@@ -5,7 +5,7 @@ import Head from "next/head";
 import { debounce } from "lodash";
 import { useSelector, useDispatch } from "react-redux";
 import { signOut, signIn } from "../authSlice";
-
+import Link from "next/link";
 interface ImageItem {
   id:number,
   user_id:number,
@@ -15,11 +15,6 @@ interface ImageItem {
   content:string,
 }
 
- type HashTag={
-  id:number,
-  tag:string,
-  created_at:string,
- }
 
 export default function Search() {
   const auth = useSelector((state: any) => state.auth.isSignIn);
@@ -117,6 +112,9 @@ export default function Search() {
             <div className="max-w-3xl mx-auto">
               <h1 className="text-2xl font-semibold mb-4">検索機能</h1>
               <p>タイトル検索</p>
+              <Link href="/tagSearch" className="flex justify-center items-center w-[300px] h-[60px] text-[#333] text-lg font-bold bg-[#7dca65] rounded-[20px] border-2 border-[#325328] no-underline">
+              タグで検索する
+              </Link>
               <div>
                 <input
                   type="text"
