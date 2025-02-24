@@ -45,9 +45,14 @@ export default function TagSearch() {
     };
 
     const debounceTagSearch = debounce((value:string)=>{
-        
-    })
+        TagSearch(value);
+    },300)
 
+    const handleChange=async(e:React.ChangeEvent<HTMLElement>)=>{
+        const value = (e.target as HTMLInputElement).value
+        setTagsDisplay(value);
+        debounceTagSearch(value);
+    }
 
     const [isClient, setIsClient] = useState(false);
 
@@ -76,7 +81,7 @@ export default function TagSearch() {
                                 id="search-input"
                                 name="search"
                                 value={tagsDisplay}
-                                onClick={handleChange}
+                                onClick={()=>handleChange}
                                 autoComplete="off"
                             >{tag.tag}</input>
                         </li>
