@@ -44,11 +44,11 @@ export default function TagSearch() {
         }
     };
 
-    const debounceTagSearch = debounce((value:string)=>{
+    const debounceTagSearch = debounce((value: string) => {
         TagSearch(value);
-    },300)
+    }, 300)
 
-    const handleChange=async(e:React.ChangeEvent<HTMLElement>)=>{
+    const handleChange = async (e: React.ChangeEvent<HTMLElement>) => {
         const value = (e.target as HTMLInputElement).value
         setTagsDisplay(value);
         debounceTagSearch(value);
@@ -75,18 +75,24 @@ export default function TagSearch() {
                         <p>タグ一覧</p>
                     </li>
                     {tags.map((tag) => (
-                        <li key={tag.id} className="py-2 border-b last:border-none">
-                            <input className="font-semibold"
+                        <li
+                            key={tag.id}
+                            className="inline-block m-[0_0.1em_0.6em_0] p-[0.6em] leading-none text-blue-600 bg-white border border-blue-600 rounded-[2em]"
+                        >
+                            <input
+                                className="font-semibold border-none bg-transparent outline-none cursor-pointer"
                                 type="text"
                                 id="search-input"
                                 name="search"
                                 value={tagsDisplay}
-                                onClick={()=>handleChange}
+                                onClick={() => handleChange}
+                                readOnly
                                 autoComplete="off"
-                            >{tag.tag}</input>
+                            />
                         </li>
                     ))}
                 </ul>
+
 
                 <ul className="border border-gray-300 rounded p-4">
                     <li className="font-bold border-b border-gray-300 pb-2 mb-2">
