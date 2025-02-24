@@ -27,14 +27,14 @@ export default function TagSearch() {
 
     }
     const TagSearch = async (value: string) => {
-        if (value! == "") {
+        if (value !== "") {
             const { data: tags, error } = await supabase
                 .from("outfit_image")
                 .select("*")
                 .ilike("tag", `%${value}%`);
 
             if (error) {
-                throw new Error("検索エラー", error)
+                console.error("検索エラー", error.message)
                 return;
             }
             setTags(tags || [])
@@ -48,10 +48,11 @@ export default function TagSearch() {
         TagSearch(value);
     }, 300)
 
-    const handleChange = async (e: React.ChangeEvent<HTMLElement>) => {
-        const value = (e.target as HTMLInputElement).value
-        setTagsDisplay(value);
-        debounceTagSearch(value);
+    useEffect(() => {
+        debounceTagSearch(tagsDisplay)
+    }, [tagsDisplay])
+    const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTagsDisplay(e.target.value);
     }
 
     const [isClient, setIsClient] = useState(false);
@@ -60,7 +61,7 @@ export default function TagSearch() {
         setIsClient(true);
     }, [])
 
-    if (isClient) {
+    if (!isClient) {
         return <div>読み込み中</div>
     }
 
@@ -70,6 +71,13 @@ export default function TagSearch() {
             <div className="max-w-3xl mx-auto">
                 <h1 className="text-2xl font-semibold mb-4">検索機能</h1>
                 <p>タグ検索</p>
+                <input
+                    className="border p-2 rounded w-full"
+                    type="text"
+                    placeholder="タグを検索..."
+                    value={tagsDisplay}
+                    onChange={handleChange}
+                />
                 <ul className="border border-gray-300 rounded p-4">
                     <li className="font-bold border-b border-gray-300 pb-2 mb-2">
                         <p>タグ一覧</p>
@@ -82,9 +90,8 @@ export default function TagSearch() {
                             <input
                                 className="font-semibold border-none bg-transparent outline-none cursor-pointer"
                                 type="text"
-                                id="search-input"
                                 name="search"
-                                value={tagsDisplay}
+                                value={tag.tag}
                                 onClick={() => handleChange}
                                 readOnly
                                 autoComplete="off"
