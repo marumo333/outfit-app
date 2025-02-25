@@ -58,57 +58,12 @@ export default function Home() {
     }
   }, [user, router])
 
-  const signInGitHub = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'github',
-      options: {
-        redirectTo: `http://localhost:3000/redirect`,
-      },
-    })
-    if (error) throw new Error(error.message)
-    router.push("/private")
-  }
-
-  const signOutGithub = async () => {
-    try {
-      const { error } = await supabase.auth.signOut()
-      if (error) throw new Error(error.message)
-      dispatch(signOut());
-    }
-    catch (error: any) {
-      console.error("ログアウトエラー発生", error.message)
-    }
-  }
-
-  useEffect(() => {
-    
-
-    const fetchAvatarUrl = async () => {
-      const { data } = supabase.storage.from("avatars").getPublicUrl("github.jpg");
-      setAvatarUrl(data.publicUrl || "");
-    };
-
-    fetchAvatarUrl();
-  }, []);
+  
 
 
   return (
     <div className="flex flex-col items-center justify-center space-y-4 min-h-screen bg-gray-100">
       <GuestLogin />
-      <button onClick={signInGitHub} className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg">githubでログイン</button>
-      {user ? (
-        <button
-          onClick={signOutGithub}
-          className="bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg">
-          githubでログアウト
-        </button>
-      ) : (
-        <div className="text-gray-500" color="blue"><p>ログイン情報を取得中:</p></div>
-      )
-      }
-        <Icon url={avatarUrl} />
-        <div className="text-gray-500" color="green"><span>ログインしてください</span></div>
-      
       <Google />
       <X/>
     </div>
