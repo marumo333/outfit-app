@@ -8,7 +8,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import React from "react";
-import Icon from "./Icon";
 import Google from "./google";
 import X from "./X";
 import { useRouter } from "next/navigation";
