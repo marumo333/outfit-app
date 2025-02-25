@@ -46,13 +46,14 @@ export default function TagSearch() {
 
     const debounceTagSearch = debounce((value: string) => {
         TagSearch(value);
-    }, 300)
+    }, 1000)
 
     useEffect(() => {
         debounceTagSearch(tagsDisplay)
     }, [tagsDisplay])
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setTagsDisplay(e.target.value);
+        console.log("aaa")
     }
 
     const [isClient, setIsClient] = useState(false);
@@ -65,7 +66,11 @@ export default function TagSearch() {
         return <div>読み込み中</div>
     }
 
-
+    const handleTagChange = (e: React.MouseEvent<HTMLButtonElement>) => {
+        setTagsDisplay(e.currentTarget.textContent || "");
+    };
+    
+    
     return (
         <>
             <div className="max-w-3xl mx-auto">
@@ -87,15 +92,10 @@ export default function TagSearch() {
                             key={tag.id}
                             className="inline-block m-[0_0.1em_0.6em_0] p-[0.6em] leading-none text-blue-600 bg-white border border-blue-600 rounded-[2em]"
                         >
-                            <input
+                            <button
                                 className="font-semibold border-none bg-transparent outline-none cursor-pointer"
-                                type="text"
-                                name="search"
-                                value={tag.tag}
-                                onClick={() => handleChange}
-                                readOnly
-                                autoComplete="off"
-                            />
+                                onClick={handleTagChange}
+                            >{tag.tag}</button>
                         </li>
                     ))}
                 </ul>
