@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "@/utils/supabase/supabase";
 import { debounce } from "lodash";
+import { Skeleton } from "@mui/material";
 
 interface TagItem {
     created_at: string,
@@ -99,8 +100,7 @@ export default function TagSearch() {
                         </li>
                     ))}
                 </ul>
-
-
+                <Skeleton variant="circular">
                 <ul className="border border-gray-300 rounded p-4">
                     <li className="font-bold border-b border-gray-300 pb-2 mb-2">
                         <p>投稿日</p>
@@ -124,7 +124,7 @@ export default function TagSearch() {
                     ))}
 
                 </ul>
-
+                </Skeleton>
             </div>
         </>
     )
