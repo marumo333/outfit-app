@@ -6,6 +6,8 @@ import { debounce } from "lodash";
 import { useSelector, useDispatch } from "react-redux";
 import { signOut, signIn } from "../authSlice";
 import Link from "next/link";
+import { Skeleton } from '@mui/material'
+
 interface ImageItem {
   id: number,
   user_id: number,
@@ -128,7 +130,7 @@ export default function Search() {
                   onChange={handleChange}
                   autoComplete="off"
                 />
-
+                <Skeleton variant="circular">
                 <ul className="border border-gray-300 rounded p-4">
                   <li className="font-bold border-b border-gray-300 pb-2 mb-2">
                     <p>投稿日</p>
@@ -150,7 +152,7 @@ export default function Search() {
                   ))}
 
                 </ul>
-
+                </Skeleton>
               </div>
             </div>
           </main>
