@@ -130,28 +130,29 @@ export default function Search() {
                   onChange={handleChange}
                   autoComplete="off"
                 />
-                <Skeleton variant="circular">
-                <ul className="border border-gray-300 rounded p-4">
-                  <li className="font-bold border-b border-gray-300 pb-2 mb-2">
-                    <p>投稿日</p>
-                    <p>タイトル</p>
-                    <p>画像</p>
-                  </li>
-                  {posts.map((post) => (
-                    <li key={post.id} className="py-2 border-b last:border-none">
-                      <p>{new Date(post.created_at).toLocaleDateString()}</p>
-                      <p className="font-semibold">{post.title}</p>
-                      <p className="font-semibold">{post.image_url}</p>
-                      <img
-                        src={post.image_url || "https://example.com/default.jpg"}
-                        alt={post.image_url}
-                        className="max-w-full h-auto"
-                        onError={(e) => (e.currentTarget.src = "https://example.com/default.jpg")}
-                      />
-                    </li>
-                  ))}
+                <Skeleton variant="rectangular" width="100%" height={100}>
+                  <ul className="border border-gray-300 rounded p-4">
 
-                </ul>
+                    <li className="font-bold border-b border-gray-300 pb-2 mb-2">
+                      <p>投稿日</p>
+                      <p>タイトル</p>
+                      <p>画像</p>
+                    </li>
+                    {posts.map((post) => (
+                      <li key={post.id} className="py-2 border-b last:border-none">
+                        <p>{new Date(post.created_at).toLocaleDateString()}</p>
+                        <p className="font-semibold">{post.title}</p>
+                        <p className="font-semibold">{post.image_url}</p>
+                        <img
+                          src={post.image_url || "https://example.com/default.jpg"}
+                          alt={post.image_url}
+                          className="max-w-full h-auto"
+                          onError={(e) => (e.currentTarget.src = "https://example.com/default.jpg")}
+                        />
+                      </li>
+                    ))}
+
+                  </ul>
                 </Skeleton>
               </div>
             </div>
