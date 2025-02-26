@@ -22,6 +22,7 @@ export default function Search() {
   const auth = useSelector((state: any) => state.auth.isSignIn);
   const dispatch = useDispatch()
   const [user, setUser] = useState("")//ログイン情報を保持するステート
+  const [loading, setLoading] = useState(false);
 
 
   useEffect(() => {
@@ -61,6 +62,7 @@ export default function Search() {
 
 
   async function fetchPosts() {
+    setLoading(true);
     const { data } = await supabase
       .from("outfit_image")
       .select("*");
@@ -76,11 +78,14 @@ export default function Search() {
 
       if (error) {
         console.error("検索エラー:", error.message);
+        setLoading(false)
         return;
       }
       setPosts(posts || []);
+      setLoading(false)
     } else {
       await fetchPosts();
+      setLoading(true)
     }
   };
 
@@ -130,14 +135,19 @@ export default function Search() {
                   onChange={handleChange}
                   autoComplete="off"
                 />
-                <Skeleton variant="rectangular" width="100%" height={100}>
+                {loading && (
+                  <div className="flex justify-center" aria-label="読み込み中">
+                    <Skeleton variant="rectangular" width="100%" height={100} />
+                  </div>
+                )}
+                  {!loading && (
                   <ul className="border border-gray-300 rounded p-4">
-
                     <li className="font-bold border-b border-gray-300 pb-2 mb-2">
                       <p>投稿日</p>
                       <p>タイトル</p>
                       <p>画像</p>
                     </li>
+
                     {posts.map((post) => (
                       <li key={post.id} className="py-2 border-b last:border-none">
                         <p>{new Date(post.created_at).toLocaleDateString()}</p>
@@ -151,9 +161,8 @@ export default function Search() {
                         />
                       </li>
                     ))}
-
                   </ul>
-                </Skeleton>
+                )}
               </div>
             </div>
           </main>
