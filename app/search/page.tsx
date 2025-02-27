@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { signOut, signIn } from "../authSlice";
 import Link from "next/link";
 import { Skeleton } from '@mui/material'
+import { useCallback } from "react";
 
 interface ImageItem {
   id: number,
@@ -106,11 +107,14 @@ try{
   };
 
 
-  const debounceSearch = debounce((value: string) => {
+  const debounceSearch = useCallback(
+    debounce((value: string) => {
     search(value);
-  }, 300)
+  }, 1000),
+  []
+);
 
-  const handleChange = async (e: React.ChangeEvent<HTMLElement>) => {
+  const handleChange =(e: React.ChangeEvent<HTMLElement>) => {
     const value = (e.target as HTMLInputElement).value
     setKeyword(value);
     debounceSearch(value);
