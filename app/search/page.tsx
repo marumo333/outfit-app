@@ -63,14 +63,30 @@ export default function Search() {
 
   async function fetchPosts() {
     setLoading(true);
-    const { data } = await supabase
+    try{
+    const { data,error } = await supabase
       .from("outfit_image")
       .select("*");
+
+      if(error){
+        console.error("データ取得エラー",error.message)
+        return;
+      }
     setPosts(data || []);
+    }catch(err){
+      console.error("予期しないエラー",err)
+    }finally{
+      setLoading(false)
+    }
   };
 
   const search = async (value: string) => {
+    setLoading(true)
     if (value !== "") {
+      await fetchPosts();
+      return;
+    }
+try{
       const { data: posts, error } = await supabase
         .from("outfit_image")
         .select("*")
@@ -78,14 +94,14 @@ export default function Search() {
 
       if (error) {
         console.error("検索エラー:", error.message);
-        setLoading(false)
         return;
       }
       setPosts(posts || []);
+    } catch(err) {
+      console.error("予期しないエラー発生",err);
+    }
+    finally{
       setLoading(false)
-    } else {
-      await fetchPosts();
-      setLoading(true)
     }
   };
 
@@ -135,12 +151,11 @@ export default function Search() {
                   onChange={handleChange}
                   autoComplete="off"
                 />
-                {loading && (
+                {loading ? (
                   <div className="flex justify-center" aria-label="読み込み中">
                     <Skeleton variant="rectangular" width="100%" height={100} />
                   </div>
-                )}
-                  {!loading && (
+                ):(
                   <ul className="border border-gray-300 rounded p-4">
                     <li className="font-bold border-b border-gray-300 pb-2 mb-2">
                       <p>投稿日</p>
