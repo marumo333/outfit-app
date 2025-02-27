@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { supabase } from "@/utils/supabase/supabase";
 import { debounce } from "lodash";
 import { Skeleton } from "@mui/material";
+import { useCallback } from "react";
 
 interface TagItem {
     created_at: string,
@@ -15,39 +16,62 @@ interface TagItem {
 export default function TagSearch() {
     const [tags, setTags] = useState<TagItem[]>([])
     const [tagsDisplay, setTagsDisplay] = useState("")
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetchTags();
     }, [])
 
     async function fetchTags() {
-        const { data } = await supabase
-            .from("outfit_image")
-            .select("*")
-        setTags(data || [])
+        setLoading(true)
+        try {
+            const { data, error } = await supabase
+                .from("outfit_image")
+                .select("*");
 
-    }
+            if (error) {
+                console.error("データ取得エラー", error.message)
+                return;
+            }
+            setTags(data || []);
+        } catch (err) {
+            console.error("予期しないエラー", err)
+        } finally {
+            setLoading(false)
+        }
+    };
+
     const TagSearch = async (value: string) => {
+        setLoading(true)
         if (value !== "") {
-            const { data: tags, error } = await supabase
+            await fetchTags();
+            return;
+        }
+        try {
+            const { data: posts, error } = await supabase
                 .from("outfit_image")
                 .select("*")
                 .ilike("tag", `%${value}%`);
 
             if (error) {
-                console.error("検索エラー", error.message)
+                console.error("検索エラー:", error.message);
                 return;
             }
-            setTags(tags || [])
+            setTags(posts || []);
+        } catch (err) {
+            console.error("予期しないエラー発生", err);
         }
-        else {
-            await fetchTags();
+        finally {
+            setLoading(false)
         }
     };
 
-    const debounceTagSearch = debounce((value: string) => {
-        TagSearch(value);
-    }, 1000)
+    const debounceTagSearch = useCallback(
+        debounce((value: string) => {
+            TagSearch(value);
+        }, 1000),
+        []
+    );
 
     useEffect(() => {
         debounceTagSearch(tagsDisplay)
@@ -74,6 +98,7 @@ export default function TagSearch() {
 
     return (
         <>
+
             <div className="max-w-3xl mx-auto">
                 <h1 className="text-2xl font-semibold mb-4">検索機能</h1>
                 <p>タグ検索</p>
@@ -100,7 +125,11 @@ export default function TagSearch() {
                         </li>
                     ))}
                 </ul>
-                <Skeleton variant="rectangular" width="100%" height={100}>
+                {loading ? (
+                    <div className="flex justify-center" aria-label="読み込み中">
+                        <Skeleton variant="rectangular" width="100%" height={100} />
+                    </div>
+                ) : (
                     <ul className="border border-gray-300 rounded p-4">
                         <li className="font-bold border-b border-gray-300 pb-2 mb-2">
                             <p>投稿日</p>
@@ -124,7 +153,10 @@ export default function TagSearch() {
                         ))}
 
                     </ul>
-                </Skeleton>
+                )
+                }
+
+
             </div>
         </>
     )
