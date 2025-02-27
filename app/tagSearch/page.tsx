@@ -43,12 +43,12 @@ export default function TagSearch() {
 
     const TagSearch = async (value: string) => {
         setLoading(true)
-        if (value !== "") {
-            await fetchTags();
-            return;
-        }
         try {
-            const { data: posts, error } = await supabase
+            if (value.trim()=== "") {
+                await fetchTags();
+                return;
+            }
+            const { data, error } = await supabase
                 .from("outfit_image")
                 .select("*")
                 .ilike("tag", `%${value}%`);
@@ -57,7 +57,7 @@ export default function TagSearch() {
                 console.error("検索エラー:", error.message);
                 return;
             }
-            setTags(posts || []);
+            setTags(data || []);
         } catch (err) {
             console.error("予期しないエラー発生", err);
         }
@@ -76,13 +76,24 @@ export default function TagSearch() {
     useEffect(() => {
         debounceTagSearch(tagsDisplay)
     }, [tagsDisplay])
+    
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        setTagsDisplay(e.target.value);
+        const value =e.target.value
+        setTagsDisplay(value);
+        debounceTagSearch(value);
         console.log("aaa")
-    }
+    };
+
+    
+    const handleTagChange = (e: React.MouseEvent<HTMLButtonElement>) => {
+        const selectedTag = e.currentTarget.textContent || "";
+        setTagsDisplay(selectedTag);
+        TagSearch(selectedTag);
+    };
 
     const [isClient, setIsClient] = useState(false);
 
+    
     useEffect(() => {
         setIsClient(true);
     }, [])
@@ -90,10 +101,6 @@ export default function TagSearch() {
     if (!isClient) {
         return <div>読み込み中</div>
     }
-
-    const handleTagChange = (e: React.MouseEvent<HTMLButtonElement>) => {
-        setTagsDisplay(e.currentTarget.textContent || "");
-    };
 
 
     return (
