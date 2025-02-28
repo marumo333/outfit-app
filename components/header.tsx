@@ -28,6 +28,11 @@ export default function Header() {
                         気になる服の画像検索
                     </Link>
                 </li>
+                <li>
+                    <Link className="text-gray-900 hover:text-blue-500 transition-colors duration-200" href="/myPage">
+                        マイページ
+                    </Link>
+                </li>
             </ul>
 
             <button
