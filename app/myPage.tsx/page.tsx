@@ -7,8 +7,14 @@ import { signIn } from "../authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useCookies } from "react-cookie";
 
-export default function MyPage() {
+interface Prof{
+    id:number,
+    username:string,
+    avatar_url:string,
+}
 
+export default function MyPage() {
+    const [myprof,setMyprof] = useState<Prof[]>([])//ユーザー情報をセット
     const auth = useSelector((state: any) => state.auth.isSignIn);
     const dispatch = useDispatch()
     const [user, setUser] = useState("")//ログイン情報を保持するステート
@@ -20,7 +26,7 @@ export default function MyPage() {
           (event, session) => {
             console.log(event)
             if (session?.user) {
-              setUser(session.user.email || "GitHub User")
+              setUser(session.user.email || "Login User")
               dispatch(signIn({
                 name: session.user.email,
                 iconUrl: "",
@@ -44,6 +50,14 @@ export default function MyPage() {
         };
       }, [dispatch]);
     
+
+      useEffect(()=>{
+        fetchUser();
+      },[])
+
+      const fetchUser=async(id:string)=>Promise<void>{
+        
+      } 
     useEffect(() => {
         setIsClient(true);
     }, [])
