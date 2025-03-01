@@ -15,7 +15,7 @@ interface Prof{
 }
 
 export default function MyPage() {
-    const [myprof,setMyprof] = useState<Prof[]>([])//ユーザー情報をセット
+    const [myprofs,setMyprofs] = useState<Prof[]>([])//ユーザー情報をセット
     const auth = useSelector((state: any) => state.auth.isSignIn);
     const dispatch = useDispatch()
     const [user, setUser] = useState("")//ログイン情報を保持するステート
@@ -59,7 +59,7 @@ export default function MyPage() {
         .order("updated_at",{ascending : false});
         if(error)
             console.error("fetching eror",error)
-        else setMyprof(data||[]);
+        else setMyprofs(data||[]);
       } 
 
       useEffect(()=>{
@@ -78,6 +78,14 @@ export default function MyPage() {
         {auth ? (
                 <>
                   <h1 className="mb-4 pt-28 text-4xl">My Page</h1>
+                  <div>
+        {myprofs.map((myprof) => (
+          <div key={myprof.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
+            <p className="text-blue-500">{myprof.username}</p>
+            <p>user-id:{myprof.avatar_url}</p>
+          </div>
+        ))}
+      </div>
                 </>
               ) : (
                 <h1>ユーザー情報を取得してください</h1>
