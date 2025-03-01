@@ -28,7 +28,7 @@ export const CommentSection = () => {
         console.log(event)
         if (session?.user) {
           setUser(session.user)
-          setAccount(session.user.email || "GitHub User")
+          setAccount(session.user.email || "LogIn User")
           dispatch(signIn({
             name: session.user.email,
             iconUrl: "",

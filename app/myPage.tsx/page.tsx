@@ -6,6 +6,7 @@ import { signOut } from "../authSlice";
 import { signIn } from "../authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useCookies } from "react-cookie";
+import { User } from "@supabase/supabase-js"
 
 interface Prof{
     id:number,
@@ -16,18 +17,21 @@ interface Prof{
 
 export default function MyPage() {
     const [myprofs,setMyprofs] = useState<Prof[]>([])//ユーザー情報をセット
+    const [myprof,setMyprof]= useState<string>('')
     const auth = useSelector((state: any) => state.auth.isSignIn);
     const dispatch = useDispatch()
-    const [user, setUser] = useState("")//ログイン情報を保持するステート
+    const [user, setUser] = useState<User | null>(null);
     const [cookies] = useCookies()
     const [isClient, setIsClient] = useState(false)
+    const [selectId, setSelectId] = useState<number | null>(null);
+    const [account, setAccount] = useState("")//ログイン情報を保持するステート
 
     useEffect(() => {
         const { data: authListener } = supabase.auth.onAuthStateChange(
           (event, session) => {
             console.log(event)
             if (session?.user) {
-              setUser(session.user.email || "Login User")
+              setAccount(session.user.email || "Login User")
               dispatch(signIn({
                 name: session.user.email,
                 iconUrl: "",
@@ -40,7 +44,8 @@ export default function MyPage() {
             if (event === 'SIGNED_OUT') {
               window.localStorage.removeItem('oauth_provider_token')
               window.localStorage.removeItem('oauth_provider_refresh_token')
-              setUser("")//user情報をリセット
+              setUser(null)
+              setAccount("")//user情報をリセット
               dispatch(signOut());
             }
           }
@@ -66,6 +71,10 @@ export default function MyPage() {
         fetchUser();
       },[])
 
+      const profSubmit=async(event:React.FormEvent<HTMLFormElement>)=>{
+        event.preventDefault();
+        if (!myprof.trim())
+      }
       
     useEffect(() => {
         setIsClient(true);
