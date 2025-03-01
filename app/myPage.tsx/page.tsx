@@ -11,6 +11,7 @@ interface Prof{
     id:number,
     username:string,
     avatar_url:string,
+    updated_at:string,
 }
 
 export default function MyPage() {
@@ -51,13 +52,21 @@ export default function MyPage() {
       }, [dispatch]);
     
 
+      const fetchUser=async()=>{
+        const {data,error} = await supabase
+        .from("profiles")
+        .select("*")
+        .order("updated_at",{ascending : false});
+        if(error)
+            console.error("fetching eror",error)
+        else setMyprof(data||[]);
+      } 
+
       useEffect(()=>{
         fetchUser();
       },[])
 
-      const fetchUser=async(id:string)=>Promise<void>{
-        
-      } 
+      
     useEffect(() => {
         setIsClient(true);
     }, [])
