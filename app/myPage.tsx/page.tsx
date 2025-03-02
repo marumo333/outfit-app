@@ -13,6 +13,7 @@ interface Prof{
     username:string,
     avatar_url:string,
     updated_at:string,
+    full_name:string
 }
 
 export default function MyPage() {
@@ -73,7 +74,21 @@ export default function MyPage() {
 
       const profSubmit=async(event:React.FormEvent<HTMLFormElement>)=>{
         event.preventDefault();
-        if (!myprof.trim())
+        if (!myprof.trim()||!user){
+            alert("ログインしてください")
+            return;
+        }
+        const { data, error } = await supabase
+              .from('profiles')
+              .insert([{ username: myprof, full_name: myprof. }]);
+        
+        
+            if (error) console.error('Error submitting comment', error);
+            else {
+              setComment('');
+            }
+            setComment("")//入力欄リセット
+            await fetchComments();//コメントを再取得
       }
       
     useEffect(() => {
