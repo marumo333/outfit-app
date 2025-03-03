@@ -42,12 +42,9 @@ export default function TagSearch() {
     };
 
     const TagSearch = async (value: string) => {
+        if (value.trim()=== "") return;
         setLoading(true)
         try {
-            if (value.trim()=== "") {
-                await fetchTags();
-                return;
-            }
             const { data, error } = await supabase
                 .from("outfit_image")
                 .select("*")
@@ -74,7 +71,9 @@ export default function TagSearch() {
     );
 
     useEffect(() => {
+        if(tagsDisplay !==""){
         debounceTagSearch(tagsDisplay)
+        }
     }, [tagsDisplay])
     
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,17 +90,9 @@ export default function TagSearch() {
         TagSearch(selectedTag);
     };
 
-    const [isClient, setIsClient] = useState(false);
-
     
-    useEffect(() => {
-        setIsClient(true);
-    }, [])
-
-    if (!isClient) {
-        return <div>読み込み中</div>
-    }
-
+    
+    
 
     return (
         <>
@@ -133,37 +124,41 @@ export default function TagSearch() {
                     ))}
                 </ul>
                 {loading ? (
-                    <div className="flex justify-center" aria-label="読み込み中">
-                        <Skeleton variant="rectangular" width="100%" height={100} />
-                    </div>
-                ) : (
-                    <ul className="border border-gray-300 rounded p-4">
-                        <li className="font-bold border-b border-gray-300 pb-2 mb-2">
-                            <p>投稿日</p>
-                            <p>タグ</p>
-                            <p>タイトル</p>
-                            <p>画像</p>
-                        </li>
-                        {tags.map((tag) => (
-                            <li key={tag.id} className="py-2 border-b last:border-none">
-                                <p>{new Date(tag.created_at).toLocaleDateString()}</p>
-                                <p className="font-semibold">{tag.tag}</p>
-                                <p className="font-semibold">{tag.title}</p>
-                                <p className="font-semibold">{tag.image_url}</p>
-                                <img
-                                    src={tag.image_url || "https://example.com/default.jpg"}
-                                    alt={tag.image_url}
-                                    className="max-w-full h-auto"
-                                    onError={(e) => (e.currentTarget.src = "https://example.com/default.jpg")}
-                                />
-                            </li>
-                        ))}
-
-                    </ul>
-                )
-                }
-
-
+                                  <ul className="border border-gray-300 rounded p-4">
+                                    {Array.from({ length: 5 }).map((_, index) => (
+                                      <li
+                                        key={index}
+                                        className="py-4 border-b last:border-none flex justify-between items-center"
+                                      >
+                                        <Skeleton variant="text" width="20%" />
+                                        <Skeleton variant="text" width="40%" />
+                                        <Skeleton variant="rectangular" width={100} height={80} />
+                                      </li>
+                                    ))}
+                                  </ul>
+                                ) : (
+                                  <ul className="border border-gray-300 rounded p-4">
+                                    <li className="font-bold border-b border-gray-300 pb-2 mb-2 flex justify-between">
+                                      <p className="w-1/4">投稿日</p>
+                                      <p className="w-1/4">タグ</p>
+                                      <p className="w-1/4">画像</p>
+                                    </li>
+                                    {tags.map((tag) => (
+                                      <li key={tag.id} className="py-4 border-b last:border-none flex justify-between items-center">
+                                        <p className="w-1/4">{new Date(tag.created_at).toLocaleDateString()}</p>
+                                        <p className="w-1/4 font-semibold">{tag.tag}</p>
+                                        <div className="w-1/4">
+                                          <img
+                                            src={tag.image_url || "https://example.com/default.jpg"}
+                                            alt={tag.title}
+                                            className="w-[100px] h-[80px] object-cover rounded"
+                                            onError={(e) => (e.currentTarget.src = "https://example.com/default.jpg")}
+                                          />
+                                        </div>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
             </div>
         </>
     )
