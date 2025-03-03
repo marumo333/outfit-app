@@ -80,15 +80,15 @@ export default function MyPage() {
         }
         const { data, error } = await supabase
               .from('profiles')
-              .insert([{ username: myprof, full_name: myprof. }]);
+              .insert([{ username: myprof, full_name: myprof.myprof.id}]);
         
         
             if (error) console.error('Error submitting comment', error);
             else {
-              setComment('');
+              setMyprof('');
             }
-            setComment("")//入力欄リセット
-            await fetchComments();//コメントを再取得
+            setMyprof("")//入力欄リセット
+            await fetchUser();//コメントを再取得
       }
       
     useEffect(() => {

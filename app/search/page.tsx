@@ -156,28 +156,28 @@ try{
                   autoComplete="off"
                 />
                 {loading ? (
-                  <div className="flex justify-center" aria-label="読み込み中">
-                    <Skeleton variant="rectangular" width="100%" height={100} />
+                  <div className="flex justify-center p-4">
+                    <Skeleton variant="rectangular" width="100%" height={120} />
                   </div>
-                ):(
+                ) : (
                   <ul className="border border-gray-300 rounded p-4">
-                    <li className="font-bold border-b border-gray-300 pb-2 mb-2">
-                      <p>投稿日</p>
-                      <p>タイトル</p>
-                      <p>画像</p>
+                    <li className="font-bold border-b border-gray-300 pb-2 mb-2 flex justify-between">
+                      <p className="w-1/4">投稿日</p>
+                      <p className="w-1/4">タイトル</p>
+                      <p className="w-1/4">画像</p>
                     </li>
-
                     {posts.map((post) => (
-                      <li key={post.id} className="py-2 border-b last:border-none">
-                        <p>{new Date(post.created_at).toLocaleDateString()}</p>
-                        <p className="font-semibold">{post.title}</p>
-                        <p className="font-semibold">{post.image_url}</p>
-                        <img
-                          src={post.image_url || "https://example.com/default.jpg"}
-                          alt={post.image_url}
-                          className="max-w-full h-auto"
-                          onError={(e) => (e.currentTarget.src = "https://example.com/default.jpg")}
-                        />
+                      <li key={post.id} className="py-2 border-b last:border-none flex justify-between items-center">
+                        <p className="w-1/4">{new Date(post.created_at).toLocaleDateString()}</p>
+                        <p className="w-1/4 font-semibold">{post.title}</p>
+                        <div className="w-1/4">
+                          <img
+                            src={post.image_url || "https://example.com/default.jpg"}
+                            alt={post.title}
+                            className="max-w-full h-auto rounded"
+                            onError={(e) => (e.currentTarget.src = "https://example.com/default.jpg")}
+                          />
+                        </div>
                       </li>
                     ))}
                   </ul>
