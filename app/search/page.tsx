@@ -156,9 +156,18 @@ try{
                   autoComplete="off"
                 />
                 {loading ? (
-                  <div className="flex justify-center p-4">
-                    <Skeleton variant="rectangular" width="100%" height={120} />
-                  </div>
+                  <ul className="border border-gray-300 rounded p-4">
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <li
+                        key={index}
+                        className="py-4 border-b last:border-none flex justify-between items-center"
+                      >
+                        <Skeleton variant="text" width="20%" />
+                        <Skeleton variant="text" width="40%" />
+                        <Skeleton variant="rectangular" width={100} height={80} />
+                      </li>
+                    ))}
+                  </ul>
                 ) : (
                   <ul className="border border-gray-300 rounded p-4">
                     <li className="font-bold border-b border-gray-300 pb-2 mb-2 flex justify-between">
@@ -167,14 +176,14 @@ try{
                       <p className="w-1/4">画像</p>
                     </li>
                     {posts.map((post) => (
-                      <li key={post.id} className="py-2 border-b last:border-none flex justify-between items-center">
+                      <li key={post.id} className="py-4 border-b last:border-none flex justify-between items-center">
                         <p className="w-1/4">{new Date(post.created_at).toLocaleDateString()}</p>
                         <p className="w-1/4 font-semibold">{post.title}</p>
                         <div className="w-1/4">
                           <img
                             src={post.image_url || "https://example.com/default.jpg"}
                             alt={post.title}
-                            className="max-w-full h-auto rounded"
+                            className="w-[100px] h-[80px] object-cover rounded"
                             onError={(e) => (e.currentTarget.src = "https://example.com/default.jpg")}
                           />
                         </div>
