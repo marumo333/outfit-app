@@ -29,7 +29,7 @@ export default function Header() {
                     </Link>
                 </li>
                 <li>
-                    <Link className="text-gray-900 hover:text-blue-500 transition-colors duration-200" href="/myPage">
+                    <Link className="text-gray-900 hover:text-blue-500 transition-colors duration-200" href="/mypage">
                         マイページ
                     </Link>
                 </li>
