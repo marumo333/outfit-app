@@ -80,7 +80,7 @@ export default function Mypage() {
         }
         const { data, error } = await supabase
             .from('profiles')
-            .insert([{ username: myprof, avatar_url: account }]);
+            .insert([{ full_name: myprof }]);
 
 
         if (error) console.error('Error submitting comment', error);
@@ -91,6 +91,25 @@ export default function Mypage() {
         await fetchUser();//ユーザー情報を再取得
     }
 
+    const updateChange = async (event: React.MouseEvent<HTMLElement>) => {
+        event.preventDefault();
+        if (!myprof.trim() || !user) {
+            alert("ログインしてください")
+            return;
+        }
+
+        const { data, error } = await supabase
+            .from('profiles')
+            .insert([{ avatar_url: account }]);
+
+
+        if (error) console.error('Error submitting comment', error);
+        else {
+            setAccount('');
+        }
+        setAccount("")//入力欄リセット
+        await fetchUser();//ユーザー情報を再取得
+    }
     useEffect(() => {
         setIsClient(true);
     }, []);
@@ -112,24 +131,24 @@ export default function Mypage() {
                             onChange={(e) => setMyprof(e.target.value)}
                             placeholder="write a username..."
                         />
-                        {account && (
-                            <img
-                                src={account}
-                                className="w-auto h-auto max-w-[100px] max-h-[100px] rounded-full"
-                            />
-                        )}
-
-
                         <button className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0"
                             type="submit"
                             id="submitComment"
                             name="subamitComment"
                         >ユーザー情報を更新</button>
                     </form>
+
+                    {account && (
+                        <img
+                            src={account}
+                            className="w-auto h-auto max-w-[100px] max-h-[100px] rounded-full"
+                        />
+                    )}
+                    <button onClick={updateChange} className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0">アイコンを更新</button>
                     <div>
                         {myprofs.map((myprof) => (
                             <div key={myprof.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
-                                <p className="text-blue-500">{myprof.username}</p>
+                                <p className="text-blue-500">{myprof.full_name}</p>
                                 {account && (
                                     <img
                                         src={account}
