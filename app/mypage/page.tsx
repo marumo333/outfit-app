@@ -92,11 +92,11 @@ export default function Mypage() {
     }
 
     useEffect(() => {
-      setIsClient(true);
+        setIsClient(true);
     }, []);
-    
+
     if (!isClient) {
-      return <h1>読み込み中...</h1>; // 初回SSR時にはクライアントでレンダリングするまでプレースホルダーを表示
+        return <h1>読み込み中...</h1>; // 初回SSR時にはクライアントでレンダリングするまでプレースホルダーを表示
     }
 
     return (
@@ -112,10 +112,12 @@ export default function Mypage() {
                             onChange={(e) => setMyprof(e.target.value)}
                             placeholder="write a username..."
                         />
-                        <img
-                            src={account}
-                            className="w-auto h-auto max-w-[100px] max-h-[100px] rounded-full"
-                        />
+                        {account && (
+                            <img
+                                src={account}
+                                className="w-auto h-auto max-w-[100px] max-h-[100px] rounded-full"
+                            />
+                        )}
 
 
                         <button className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0"
@@ -128,7 +130,12 @@ export default function Mypage() {
                         {myprofs.map((myprof) => (
                             <div key={myprof.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
                                 <p className="text-blue-500">{myprof.username}</p>
-                                <p>user-id:{myprof.avatar_url}</p>
+                                {account && (
+                                    <img
+                                        src={account}
+                                        className="w-auto h-auto max-w-[100px] max-h-[100px] rounded-full"
+                                    />
+                                )}
                             </div>
                         ))}
                     </div>
