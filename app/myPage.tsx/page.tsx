@@ -80,7 +80,7 @@ export default function MyPage() {
         }
         const { data, error } = await supabase
               .from('profiles')
-              .insert([{ username: myprof, full_name: myprof.myprof.id}]);
+              .insert([{ username: myprof, icon_url:account}]);
         
         
             if (error) console.error('Error submitting comment', error);
@@ -88,20 +88,35 @@ export default function MyPage() {
               setMyprof('');
             }
             setMyprof("")//入力欄リセット
-            await fetchUser();//コメントを再取得
+            await fetchUser();//ユーザー情報を再取得
       }
+
       
-    useEffect(() => {
-        setIsClient(true);
-    }, [])
-    if (!isClient) {
-        return (<h1>読み込み中</h1>)
-    }
+
     return (
         <>
         {auth ? (
                 <>
                   <h1 className="mb-4 pt-28 text-4xl">My Page</h1>
+                  <form onSubmit={profSubmit}>
+        <textarea
+          value={myprof}
+          id="myprof"
+          name="myprof"
+          onChange={(e) => setMyprof(e.target.value)}
+          placeholder="write a username..."
+        />
+        <img
+        src={account}
+        className="height:auto weigth:auto"
+        />
+
+        <button className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0"
+          type="submit"
+          id="submitComment"
+          name="subamitComment"
+        >ユーザー情報を更新</button>
+      </form>
                   <div>
         {myprofs.map((myprof) => (
           <div key={myprof.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
