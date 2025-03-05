@@ -7,6 +7,7 @@ import { signIn } from "../authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useCookies } from "react-cookie";
 import { User } from "@supabase/supabase-js"
+import Compressor from "compressorjs"
 
 interface Prof {
     id: number,
@@ -18,6 +19,9 @@ interface Prof {
 
 export default function Mypage() {
     const [myprofs, setMyprofs] = useState<Prof[]>([])//ユーザー情報をセット
+    const [file, setFile] = useState<string>()
+    const [error, setError] = useState("")
+    const [compressedFile, setCompressedFile] = useState(null); // 圧縮されたファイルを保持するステート
     const [myprof, setMyprof] = useState<string>('')
     const auth = useSelector((state: any) => state.auth.isSignIn);
     const dispatch = useDispatch()
@@ -81,7 +85,7 @@ export default function Mypage() {
         const { data, error } = await supabase
             .from('profiles')
             .insert([{ full_name: myprof }])
-            .eq('id',user.id);
+            .eq('id', user.id);
 
         if (error) console.error('Error submitting comment', error);
         else {
@@ -91,6 +95,31 @@ export default function Mypage() {
         await fetchUser();//ユーザー情報を再取得
     }
 
+    const handleFileChange = (event: { target: { files: any[]; }; }) => {
+        const selectedFile = event.target.files[0]; // 選択したファイルを保存
+        console.log(selectedFile); // デバッグ用: 選択したファイルを確認
+
+        if (selectedFile) {
+            setFile(selectedFile);
+
+            // 画像を圧縮する
+            new Compressor(selectedFile, {
+                quality: 0.8, // 圧縮率
+                maxWidth: 100,
+                maxHeight: 100,
+                mimeType: 'image/jpeg',
+                success: (compressedResult) => {
+                    console.log(compressedResult); // 圧縮後のファイルを確認
+                    setCompressedFile(URL.createObjectURL(compressedResult)); // 圧縮されたファイルのURLを保存
+                    setFile(compressedResult); // 圧縮されたファイルを保存
+                },
+                error(err: { message: any; }) {
+                    console.error(err.message);
+                    setError('画像の圧縮中にエラーが発生しました。');
+                },
+            });
+        }
+    };
     const updateChange = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
         if (!myprof.trim() || !user) {
@@ -138,12 +167,12 @@ export default function Mypage() {
                         >ユーザー情報を更新</button>
                     </form>
 
-                    {account && (
-                        <img
-                            src={account}
-                            className="w-auto h-auto max-w-[100px] max-h-[100px] rounded-full"
-                        />
-                    )}
+                    <input
+                        accept="image/*"
+                        multiple type="file"
+                        value={user.file}
+                        onChange={handleFileChange}
+                    />
                     <button onClick={updateChange} className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0">アイコンを更新</button>
                     <div>
                         {myprofs.map((myprof) => (
