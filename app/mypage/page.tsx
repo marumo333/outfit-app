@@ -80,8 +80,8 @@ export default function Mypage() {
         }
         const { data, error } = await supabase
             .from('profiles')
-            .insert([{ full_name: myprof }]);
-
+            .insert([{ full_name: myprof }])
+            .eq('id',user.id);
 
         if (error) console.error('Error submitting comment', error);
         else {
