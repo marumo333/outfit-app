@@ -19,7 +19,7 @@ interface Prof {
 
 export default function Mypage() {
     const [myprofs, setMyprofs] = useState<Prof[]>([])//ユーザー情報をセット
-    const [file, setFile] = useState < File || null > (null)
+    const [file, setFile] = useState <File | null > (null)
     const [error, setError] = useState("")
     const [compressedFile, setCompressedFile] = useState(null); // 圧縮されたファイルを保持するステート
     const [myprof, setMyprof] = useState<string>('')
@@ -106,7 +106,9 @@ export default function Mypage() {
             maxHeight: 100,
             mimeType: 'image/jpeg',
             success: (compressedResult) => {
-                setFile(compressedResult as File);
+                if (compressedResult instanceof Blob) {
+                    setFile(new File([compressedResult], selectedFile.name, { type: "image/jpeg" }))
+                }
             },
             error: (err) => {
                 console.error(err.message);
@@ -131,13 +133,20 @@ export default function Mypage() {
             return;
         }
 
-        const publicUrl = supabase.storage.from("avatars").getPublicUrl(filePath).publicUrl;
-        await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("id", user.id);
-        setAccount(publicUrl);
+        const {data} = supabase.storage
+            .from("avatars")
+            .getPublicUrl(filePath);
+
+            const publicUrl = data.publicUrl
+
+        const { error: updateError } = await supabase
+            .from("profiles")
+            .update({ avatar_url: publicUrl })
+            .eq("id", user.id)
 
 
         if (!updateError) {
-            setAccount(data.publicUrl);
+            setAccount(publicUrl);
         }
 
         await fetchUser();
