@@ -19,7 +19,7 @@ interface Prof {
 
 export default function Mypage() {
     const [myprofs, setMyprofs] = useState<Prof[]>([])//ユーザー情報をセット
-    const [file, setFile] = useState<string>()
+    const [file, setFile] = useState < File || null > (null)
     const [error, setError] = useState("")
     const [compressedFile, setCompressedFile] = useState(null); // 圧縮されたファイルを保持するステート
     const [myprof, setMyprof] = useState<string>('')
@@ -95,49 +95,52 @@ export default function Mypage() {
         await fetchUser();//ユーザー情報を再取得
     }
 
-    const handleFileChange = (event: { target: { files: any[]; }; }) => {
-        const selectedFile = event.target.files[0]; // 選択したファイルを保存
-        console.log(selectedFile); // デバッグ用: 選択したファイルを確認
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = event.target.files?.[0] // 選択したファイルを保存
+        if (!selectedFile) return;
 
-        if (selectedFile) {
-            setFile(selectedFile);
-
-            // 画像を圧縮する
-            new Compressor(selectedFile, {
-                quality: 0.8, // 圧縮率
-                maxWidth: 100,
-                maxHeight: 100,
-                mimeType: 'image/jpeg',
-                success: (compressedResult) => {
-                    console.log(compressedResult); // 圧縮後のファイルを確認
-                    setCompressedFile(URL.createObjectURL(compressedResult)); // 圧縮されたファイルのURLを保存
-                    setFile(compressedResult); // 圧縮されたファイルを保存
-                },
-                error(err: { message: any; }) {
-                    console.error(err.message);
-                    setError('画像の圧縮中にエラーが発生しました。');
-                },
-            });
-        }
+        // 画像を圧縮する
+        new Compressor(selectedFile, {
+            quality: 0.8, // 圧縮率
+            maxWidth: 100,
+            maxHeight: 100,
+            mimeType: 'image/jpeg',
+            success: (compressedResult) => {
+                setFile(compressedResult as File);
+            },
+            error: (err) => {
+                console.error(err.message);
+                setError("画像の圧縮中にエラーが発生しました。");
+            },
+        });
     };
     const updateChange = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
-        if (!myprof.trim() || !user) {
-            alert("ログインしてください")
+        if (!file || !user) {
+            alert("画像を選択してください")
             return;
         }
 
-        const { data, error } = await supabase
-            .from('profiles')
-            .update([{ avatar_url: account }])
-            .eq("id", user.id);
+        const filePath = `avatars/${user.id}_${Date.now()}.jpg`;
+        const { error: uploadError } = await supabase.storage
+            .from("avatars")
+            .upload(filePath, file, { contentType: "image/jpeg" });
 
-        if (error) console.error('Error submitting comment', error);
-        else {
-            setAccount('');
+        if (uploadError) {
+            console.error("画像アップロードエラー", uploadError);
+            return;
         }
-        setAccount("")//入力欄リセット
-        await fetchUser();//ユーザー情報を再取得
+
+        const publicUrl = supabase.storage.from("avatars").getPublicUrl(filePath).publicUrl;
+        await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("id", user.id);
+        setAccount(publicUrl);
+
+
+        if (!updateError) {
+            setAccount(data.publicUrl);
+        }
+
+        await fetchUser();
     }
     useEffect(() => {
         setIsClient(true);
@@ -170,7 +173,6 @@ export default function Mypage() {
                     <input
                         accept="image/*"
                         multiple type="file"
-                        value={user.file}
                         onChange={handleFileChange}
                     />
                     <button onClick={updateChange} className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0">アイコンを更新</button>
