@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useCookies } from "react-cookie";
 import { User } from "@supabase/supabase-js"
 import Compressor from "compressorjs"
+import Image from "next/image";
 
 interface Prof {
     id: number,
@@ -19,7 +20,7 @@ interface Prof {
 
 export default function Mypage() {
     const [myprofs, setMyprofs] = useState<Prof[]>([])//ユーザー情報をセット
-    const [file, setFile] = useState <File | null > (null)
+    const [file, setFile] = useState<File | null>(null)
     const [error, setError] = useState("")
     const [compressedFile, setCompressedFile] = useState(null); // 圧縮されたファイルを保持するステート
     const [myprof, setMyprof] = useState<string>('')
@@ -133,11 +134,12 @@ export default function Mypage() {
             return;
         }
 
-        const {data} = supabase.storage
+        const { data } = supabase.storage
             .from("avatars")
             .getPublicUrl(filePath);
+        console.log("取得した画像URL:", data.publicUrl); // デバッグログを追加
 
-            const publicUrl = data.publicUrl
+        const publicUrl = data.publicUrl
 
         const { error: updateError } = await supabase
             .from("profiles")
@@ -189,12 +191,16 @@ export default function Mypage() {
                         {myprofs.map((myprof) => (
                             <div key={myprof.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
                                 <p className="text-blue-500">{myprof.username}</p>
-                                {account && (
-                                    <img
-                                        src={account}
-                                        className="w-auto h-auto max-w-[100px] max-h-[100px] rounded-full"
-                                    />
-                                )}
+                                <Image
+                                    src={account && account.startsWith("http") ? account : "/default-avatar.png"}
+                                    width={100}
+                                    height={100}
+                                    alt="User Avatar"
+                                    className="object-cover rounded-full"
+                                    unoptimized
+                                />
+
+
                             </div>
                         ))}
                     </div>
