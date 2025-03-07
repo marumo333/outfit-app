@@ -134,12 +134,12 @@ export default function Mypage() {
             return;
         }
 
-        const { data } = supabase.storage
-            .from("avatars")
-            .getPublicUrl(filePath);
-        console.log("取得した画像URL:", data.publicUrl); // デバッグログを追加
+        const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
+        const publicUrl = data?.publicUrl || ""; // 🔥 安全に publicUrl を取得
+        console.log("取得した画像URL:", publicUrl);
 
-        const publicUrl = data.publicUrl
+
+
 
         const { error: updateError } = await supabase
             .from("profiles")
