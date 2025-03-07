@@ -135,7 +135,7 @@ export default function Mypage() {
         }
 
         const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
-        const publicUrl = data?.publicUrl || ""; // 🔥 安全に publicUrl を取得
+        const publicUrl = data?.publicUrl || "";
         console.log("取得した画像URL:", publicUrl);
 
 
@@ -199,6 +199,7 @@ export default function Mypage() {
                                     className="object-cover rounded-full"
                                     unoptimized
                                 />
+
 
 
                             </div>
