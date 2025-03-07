@@ -8,13 +8,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { useCookies } from "react-cookie";
 import { User } from "@supabase/supabase-js"
 import Compressor from "compressorjs"
-import Image from "next/image";
 
 interface Prof {
     id: number,
     username: string,
     avatar_url: string,
-    created_at: string,
+    updated_at: string,
     full_name: string
 }
 
@@ -64,14 +63,22 @@ export default function Mypage() {
 
 
     const fetchUser = async () => {
+        if (!user) return;
+
         const { data, error } = await supabase
-            .from("avatars")
+            .from("profiles")
             .select("*")
-            .order("created_at", { ascending: false });
-        if (error)
-            console.error("fetching eror", error)
-        else setMyprofs(data || []);
-    }
+            .eq("user_id", user.id) // 🔥ユーザーごとのデータのみ取得
+            .order("updated_at", { ascending: false })
+            .limit(1); // 1件のみ取得
+
+        if (error) {
+            console.error("fetching error", error);
+        } else if (data.length > 0) {
+            setAccount(data[0].avatar_url); // 🔥 最新のアイコン URL をセット
+        }
+    };
+
 
     useEffect(() => {
         fetchUser();
@@ -84,9 +91,8 @@ export default function Mypage() {
             return;
         }
         const { data, error } = await supabase
-            .from('avatars')
-            .insert([{ full_name: myprof }])
-            .eq('id', user.id);
+            .from('profiles')
+            .insert([{ user_id: user.id, full_name: myprof }])
 
         if (error) console.error('Error submitting comment', error);
         else {
@@ -119,39 +125,22 @@ export default function Mypage() {
     };
     const updateChange = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
-        if (!file || !user) {
-            alert("画像を選択してください")
+        if (!myprof.trim() || !user) {
+            alert("ログインしてください")
             return;
         }
 
-        const filePath = `avatars/${user.id}_${Date.now()}.jpg`;
-        const { error: uploadError } = await supabase.storage
-            .from("avatars")
-            .upload(filePath, file, { contentType: "image/jpeg" });
+        const { data, error } = await supabase
+            .from('profiles')
+            .update({ avatar_url: account })
+            .eq("user_id", user.id);
 
-        if (uploadError) {
-            console.error("画像アップロードエラー", uploadError);
-            return;
+        if (error) console.error('Error submitting comment', error);
+        else {
+            setAccount('');
         }
-
-        const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
-        const publicUrl = data?.publicUrl || "";
-        console.log("取得した画像URL:", publicUrl);
-
-
-
-
-        const { error: updateError } = await supabase
-            .from("avatars")
-            .update({ avatar_url: publicUrl })
-            .eq("id", user.id)
-
-
-        if (!updateError) {
-            setAccount(publicUrl);
-        }
-
-        await fetchUser();
+        setAccount("")//入力欄リセット
+        await fetchUser();//ユーザー情報を再取得
     }
     useEffect(() => {
         setIsClient(true);
@@ -191,17 +180,12 @@ export default function Mypage() {
                         {myprofs.map((myprof) => (
                             <div key={myprof.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
                                 <p className="text-blue-500">{myprof.username}</p>
-                                <Image
-                                    src={account && account.startsWith("http") ? account : "/default-avatar.png"}
-                                    width={100}
-                                    height={100}
-                                    alt="User Avatar"
-                                    className="object-cover rounded-full"
-                                    unoptimized
-                                />
-
-
-
+                                {account && (
+                                    <img
+                                        src={account}
+                                        className="w-auto h-auto max-w-[100px] max-h-[100px] rounded-full"
+                                    />
+                                )}
                             </div>
                         ))}
                     </div>
