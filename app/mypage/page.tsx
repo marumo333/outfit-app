@@ -14,7 +14,7 @@ interface Prof {
     id: number,
     username: string,
     avatar_url: string,
-    updated_at: string,
+    created_at: string,
     full_name: string
 }
 
@@ -65,9 +65,9 @@ export default function Mypage() {
 
     const fetchUser = async () => {
         const { data, error } = await supabase
-            .from("profiles")
+            .from("avatars")
             .select("*")
-            .order("updated_at", { ascending: false });
+            .order("created_at", { ascending: false });
         if (error)
             console.error("fetching eror", error)
         else setMyprofs(data || []);
@@ -84,7 +84,7 @@ export default function Mypage() {
             return;
         }
         const { data, error } = await supabase
-            .from('profiles')
+            .from('avatars')
             .insert([{ full_name: myprof }])
             .eq('id', user.id);
 
@@ -142,7 +142,7 @@ export default function Mypage() {
 
 
         const { error: updateError } = await supabase
-            .from("profiles")
+            .from("avatars")
             .update({ avatar_url: publicUrl })
             .eq("id", user.id)
 
