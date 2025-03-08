@@ -68,21 +68,24 @@ export default function Mypage() {
         const { data, error } = await supabase
             .from("profiles")
             .select("*")
-            .eq("user_id", user.id) // 🔥ユーザーごとのデータのみ取得
+            .eq("user_id", user.id) // ユーザーごとのデータのみ取得
             .order("updated_at", { ascending: false })
             .limit(1); // 1件のみ取得
 
         if (error) {
             console.error("fetching error", error);
         } else if (data.length > 0) {
-            setAccount(data[0].avatar_url); // 🔥 最新のアイコン URL をセット
+            setAccount(data[0].avatar_url); //最新のアイコン URL をセット
+            setMyprofs(data);
         }
     };
 
 
     useEffect(() => {
-        fetchUser();
-    }, [])
+        if (user) {
+            fetchUser();
+        }
+    }, [user])
 
     const profSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -114,7 +117,7 @@ export default function Mypage() {
             mimeType: 'image/jpeg',
             success: (compressedResult) => {
                 if (compressedResult instanceof Blob) {
-                    setFile(new File([compressedResult], selectedFile.name, { type: "image/jpeg" }))
+                    setFile(new File([compressedResult], selectedFile.name, { type: "image/jpeg" }));
                 }
             },
             error: (err) => {
@@ -125,23 +128,41 @@ export default function Mypage() {
     };
     const updateChange = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
-        if (!myprof.trim() || !user) {
-            alert("ログインしてください")
+        if (!file || !user) {
+            alert("画像を選択してください");
             return;
         }
 
-        const { data, error } = await supabase
-            .from('profiles')
-            .update({ avatar_url: account })
+        const filePath = `avatars/${user.id}_${Date.now()}.jpg`;
+        const { error: uploadError } = await supabase.storage
+            .from("avatars")
+            .upload(filePath, file, { contentType: "image/jpeg" });
+
+        if (uploadError) {
+            console.error("画像アップロードエラー", uploadError);
+            return;
+        }
+
+        const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
+        const publicUrl = data?.publicUrl || "";
+
+        if (!publicUrl) {
+            console.error("画像の URL を取得できませんでした。");
+            return;
+        }
+
+        const { error: updateError } = await supabase
+            .from("profiles")
+            .update({ avatar_url: publicUrl })
             .eq("user_id", user.id);
 
-        if (error) console.error('Error submitting comment', error);
-        else {
-            setAccount('');
+        if (!updateError) {
+            setAccount(publicUrl);
         }
-        setAccount("")//入力欄リセット
-        await fetchUser();//ユーザー情報を再取得
-    }
+
+        await fetchUser();
+    };
+
     useEffect(() => {
         setIsClient(true);
     }, []);
@@ -176,10 +197,10 @@ export default function Mypage() {
                         onChange={handleFileChange}
                     />
                     <button onClick={updateChange} className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0">アイコンを更新</button>
-                    <div>
-                        {myprofs.map((myprof) => (
+                    {myprofs.length > 0 ? (
+                        myprofs.map((myprof) => (
                             <div key={myprof.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
-                                <p className="text-blue-500">{myprof.username}</p>
+                                <p className="text-blue-500">{myprof.username || "No Username"}</p>
                                 {account && (
                                     <img
                                         src={account}
@@ -187,8 +208,11 @@ export default function Mypage() {
                                     />
                                 )}
                             </div>
-                        ))}
-                    </div>
+                        ))
+                    ) : (
+                        <p>ユーザーデータがありません</p>  
+                    )}
+
                 </>
             ) : (
                 <h1>ユーザー情報を取得してください</h1>
