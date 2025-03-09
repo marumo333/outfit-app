@@ -49,8 +49,8 @@ export default function Mypage() {
 
         const { data, error } = await supabase
             .from("profiles")
-            .select("*")
-            .eq("user.id", user) // ユーザーごとのデータのみ取得
+            .select("id, username, avatar_url, updated_at, full_name")
+            .eq("id", user) // ユーザーごとのデータのみ取得
             .order("updated_at", { ascending: false })
             .limit(1); // 1件のみ取得
 
