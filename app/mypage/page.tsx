@@ -81,8 +81,10 @@ export default function Mypage() {
         }
         const { data, error } = await supabase
             .from('profiles')
-            .insert([{ user_id: user, full_name: myprof }])
-
+            .upsert(
+                { id: user, full_name: myprof },
+                {onConflict:'id'}//idが重複していたら更新
+            );
         if (error) console.error('Error submitting comment', error);
         else {
             setMyprof('');
@@ -186,7 +188,7 @@ export default function Mypage() {
                     {myprofs.length > 0 ? (
                         myprofs.map((myprof) => (
                             <div key={myprof.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
-                                <p className="text-blue-500">{myprof.username || "No Username"}</p>
+                                <p className="text-blue-500">{myprof.full_name|| "No Username"}</p>
                                 {account && (
                                     <img
                                         src={account}
