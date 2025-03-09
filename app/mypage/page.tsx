@@ -2,11 +2,8 @@
 import { useState, useEffect } from "react";
 import React from "react";
 import { supabase } from "@/utils/supabase/supabase";
-import { signOut } from "../authSlice";
-import { signIn } from "../authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { useCookies } from "react-cookie";
-import { User } from "@supabase/supabase-js"
 import Compressor from "compressorjs"
 
 interface Prof {
@@ -24,42 +21,20 @@ export default function Mypage() {
     const [compressedFile, setCompressedFile] = useState(null); // 圧縮されたファイルを保持するステート
     const [myprof, setMyprof] = useState<string>('')
     const auth = useSelector((state: any) => state.auth.isSignIn);
-    const dispatch = useDispatch()
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<string>('');
     const [cookies] = useCookies()
     const [isClient, setIsClient] = useState(false)
     const [selectId, setSelectId] = useState<number | null>(null);
     const [account, setAccount] = useState("")//ログイン情報を保持するステート
-
+    
+    
     useEffect(() => {
-        const { data: authListener } = supabase.auth.onAuthStateChange(
-            (event, session) => {
-                console.log(event)
-                if (session?.user) {
-                    setAccount(session.user.email || "Login User")
-                    dispatch(signIn({
-                        name: session.user.email,
-                        iconUrl: "",
-                        token: session.provider_token
-                    }))
-                    window.localStorage.setItem('oauth_provider_token', session.provider_token || "");
-                    window.localStorage.setItem('oauth_provider_refresh_token', session.provider_refresh_token || "")
-                }
-
-                if (event === 'SIGNED_OUT') {
-                    window.localStorage.removeItem('oauth_provider_token')
-                    window.localStorage.removeItem('oauth_provider_refresh_token')
-                    setUser(null)
-                    setAccount("")//user情報をリセット
-                    dispatch(signOut());
-                }
-            }
-        );
-        //クリーンアップ処理追加（リスナー削除）
-        return () => {
-            authListener?.subscription.unsubscribe();
-        };
-    }, [dispatch]);
+        (async() => {
+            const { data: { user } } = await supabase.auth.getUser();
+            console.log(user)
+            if(!user)setUser
+          })()
+    }, []);
 
 
     const fetchUser = async () => {
@@ -68,7 +43,7 @@ export default function Mypage() {
         const { data, error } = await supabase
             .from("profiles")
             .select("*")
-            .eq("user_id", user.id) // ユーザーごとのデータのみ取得
+            .eq("user_id", user) // ユーザーごとのデータのみ取得
             .order("updated_at", { ascending: false })
             .limit(1); // 1件のみ取得
 
@@ -78,8 +53,10 @@ export default function Mypage() {
             setAccount(data[0].avatar_url); //最新のアイコン URL をセット
             setMyprofs(data);
         }
+
     };
 
+    
 
     useEffect(() => {
         if (user) {
@@ -89,13 +66,15 @@ export default function Mypage() {
 
     const profSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        console.log(myprof)
+        console.log(user)
         if (!myprof.trim() || !user) {
             alert("ログインしてください")
             return;
         }
         const { data, error } = await supabase
             .from('profiles')
-            .insert([{ user_id: user.id, full_name: myprof }])
+            .insert([{ user_id: user, full_name: myprof }])
 
         if (error) console.error('Error submitting comment', error);
         else {
@@ -133,7 +112,7 @@ export default function Mypage() {
             return;
         }
 
-        const filePath = `avatars/${user.id}_${Date.now()}.jpg`;
+        const filePath = `avatars/${user}_${Date.now()}.jpg`;
         const { error: uploadError } = await supabase.storage
             .from("avatars")
             .upload(filePath, file, { contentType: "image/jpeg" });
@@ -154,7 +133,7 @@ export default function Mypage() {
         const { error: updateError } = await supabase
             .from("profiles")
             .update({ avatar_url: publicUrl })
-            .eq("user_id", user.id);
+            .eq("user_id", user);
 
         if (!updateError) {
             setAccount(publicUrl);
@@ -173,7 +152,7 @@ export default function Mypage() {
 
     return (
         <>
-            {auth ? (
+            {user ? (
                 <>
                     <h1 suppressHydrationWarning className="mb-4 pt-28 text-4xl">My Page</h1>
                     <form onSubmit={profSubmit}>
