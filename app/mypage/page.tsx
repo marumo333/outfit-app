@@ -29,21 +29,28 @@ export default function Mypage() {
     
     
     useEffect(() => {
-        (async() => {
-            const { data: { user } } = await supabase.auth.getUser();
+        const fetchUser =async()=>{
+            const { data,error} = await supabase.auth.getUser();
             console.log(user)
-            if(!user)setUser
-          })()
+            if(error){
+                console.log("ユーザー情報を取得だきませんでした",error);
+                return;
+            }
+            if(data?.user){
+                setUser(data.user.id);
+          }
+        }
+        fetchUser();
     }, []);
 
 
-    const fetchUser = async () => {
+    const getUser = async () => {
         if (!user) return;
 
         const { data, error } = await supabase
             .from("profiles")
             .select("*")
-            .eq("user_id", user) // ユーザーごとのデータのみ取得
+            .eq("user.id", user) // ユーザーごとのデータのみ取得
             .order("updated_at", { ascending: false })
             .limit(1); // 1件のみ取得
 
@@ -60,7 +67,7 @@ export default function Mypage() {
 
     useEffect(() => {
         if (user) {
-            fetchUser();
+            getUser();
         }
     }, [user])
 
@@ -81,7 +88,7 @@ export default function Mypage() {
             setMyprof('');
         }
         setMyprof("")//入力欄リセット
-        await fetchUser();//ユーザー情報を再取得
+        await getUser();//ユーザー情報を再取得
     }
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,7 +146,7 @@ export default function Mypage() {
             setAccount(publicUrl);
         }
 
-        await fetchUser();
+        await getUser();
     };
 
     useEffect(() => {
