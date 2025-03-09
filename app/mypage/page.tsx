@@ -142,7 +142,7 @@ export default function Mypage() {
         const { error: updateError } = await supabase
             .from("profiles")
             .update({ avatar_url: publicUrl })
-            .eq("user_id", user);
+            .eq("id", user);
 
         if (!updateError) {
             setAccount(publicUrl);
