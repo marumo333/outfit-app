@@ -3,7 +3,7 @@
 import React, { useEffect, useState, use } from "react";
 import { supabase } from "@/utils/supabase/supabase";
 import CommentSection from "./commentSectiont"
-
+import GoodSection from "./goodSection"
 
 interface ImageItem {
   id: string; // 画像ID
@@ -124,7 +124,6 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
             >
               ダウンロード
             </a>
-
             <button
               onClick={handleDelete}
               className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow-md"
@@ -132,6 +131,7 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
               投稿の削除
             </button>
           </div>
+          <GoodSection/>
           <CommentSection />
         </>
       ) : (
