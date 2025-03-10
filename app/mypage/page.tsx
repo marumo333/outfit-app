@@ -4,7 +4,8 @@ import React from "react";
 import { supabase } from "@/utils/supabase/supabase";
 import { useSelector, useDispatch } from "react-redux";
 import { useCookies } from "react-cookie";
-import Compressor from "compressorjs"
+import Compressor from "compressorjs";
+import Good from "./good"
 
 interface Prof {
     id: number,
@@ -195,7 +196,9 @@ export default function Mypage() {
                                         className="w-auto h-auto max-w-[100px] max-h-[100px] rounded-full"
                                     />
                                 )}
+                                 <Good/>
                             </div>
+                
                         ))
                     ) : (
                         <p>ユーザーデータがありません</p>  
