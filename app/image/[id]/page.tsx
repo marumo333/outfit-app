@@ -17,14 +17,14 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const [imageDetail, setImageDetail] = useState<ImageItem | null>(null);
   const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState<string>("");
 
-
-  const fetchImage = async (imageUrl: string) => {
+  const fetchImage = async (imageId: string) => {
     setLoading(true);
     const { data, error } = await supabase
       .from("outfit_image")
       .select("id,name,image_url,title,content")
-      .eq("id", imageUrl)
+      .eq("id", imageId)
       .single();
 
     if (error || !data) {
@@ -39,7 +39,7 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
       title: data.title || "タイトルなし",
       content: data.content || "説明なし",
     })
-   
+
     setLoading(false);
   };
 
@@ -70,6 +70,19 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
       alert(error.message);
     }
   }
+
+  const fetchUser = async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (data?.user) {
+      setUserId(data.user.id);
+    }
+  };
+  useEffect(() => {
+    if (resolvedParams.id) {
+      fetchImage(resolvedParams.id);
+      fetchUser();
+    }
+  }, [resolvedParams.id]);
 
   useEffect(() => {
     if (resolvedParams.id) {
@@ -132,7 +145,7 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
               投稿の削除
             </button>
           </div>
-          <GoodSection imageId={""} userId={""}/>
+          <GoodSection imageId={imageDetail.id} userId={userId} />
           <CommentSection />
         </>
       ) : (
