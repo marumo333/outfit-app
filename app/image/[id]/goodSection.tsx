@@ -32,14 +32,53 @@ export const GoodSection:React.FC<GoodThread>=({imageId,userId})=>{
             .single();;
 
             if(likeData){
-                setLoading(true);
+                setIsLiked(true);
             }
         };
         fetchLikes();
     },[userId,imageId])
-    return(
-        <>
-        </>
-    )
-}
-export default GoodSection;
+
+    const handleLikeToggle = async () => {
+        if (!userId) return; // ログインしていない場合は処理しない
+    
+        setLoading(true);
+    
+        if (isLiked) {
+          // いいねを削除
+          const { error } = await supabase
+            .from("likes")
+            .delete()
+            .match({ user_id: userId, image_id: imageId });
+    
+          if (!error) {
+            setIsLiked(false);
+            setLikeCount((prev) => prev - 1);
+          }
+        } else {
+          // いいねを追加
+          const { error } = await supabase
+            .from("likes")
+            .insert({ user_id: userId, image_id: imageId });
+    
+          if (!error) {
+            setIsLiked(true);
+            setLikeCount((prev) => prev + 1);
+          }
+        }
+    
+        setLoading(false);
+      };
+    
+      return (
+        <button
+          onClick={handleLikeToggle}
+          className={`flex items-center space-x-2 ${isLiked ? "text-red-500" : "text-gray-500"}`}
+          disabled={loading}
+        >
+          <HeartIcon className="h-6 w-6" />
+          <span>{likeCount}</span>
+        </button>
+      );
+    };
+    
+    export default GoodSection;

@@ -39,6 +39,7 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
       title: data.title || "タイトルなし",
       content: data.content || "説明なし",
     })
+   
     setLoading(false);
   };
 
@@ -131,7 +132,7 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
               投稿の削除
             </button>
           </div>
-          <GoodSection/>
+          <GoodSection imageId={""} userId={""}/>
           <CommentSection />
         </>
       ) : (
