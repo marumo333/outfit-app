@@ -3,45 +3,40 @@ import { HeartIcon } from '@heroicons/react/24/solid'
 import { supabase } from "@/utils/supabase/supabase";
 import React,{useState,useEffect} from "react";
 import router from 'next/router';
+import { moveMessagePortToContext } from 'worker_threads';
 interface GoodThread{
-    id:number,
-    user_id:string,
-    comment_id:string,
+    imageId:string,
+    userId:string,
 }
-export const GoodSection=()=>{
-    const [good,setGood] = useState<GoodThread[]>([])
-    const [user,setUser]=useState<string>('')
 
+export const GoodSection:React.FC<GoodThread>=({imageId,userId})=>{
+    const [isLiked,setIsLiked] = useState(false)
+    const[likeCount,setLikeCount] = useState(0) 
+    const [loading,setLoading] = useState(false)
 
-    useEffect(() => {
-            const fetchUser =async()=>{
-                const { data,error} = await supabase.auth.getUser();
-                console.log(user)
-                if(error){
-                    console.log("ユーザー情報を取得だきませんでした",error);
-                    return;
-                }
-                if(data?.user){
-                    setUser(data.user.id);
-              }
+    useEffect(()=>{
+        const fetchLikes=async()=>{
+            const{data,error}=await supabase 
+            .from('likes')
+            .select("*",{count:"exact"})
+            .eq("image_id",imageId);
+
+            if(!error){
+                setLikeCount(data.length);
             }
-            fetchUser();
-        }, []);
+            const{data:likeData}= await supabase
+            .from('likes')
+            .select("*")
+            .eq("image_id",imageId)
+            .eq("user_id",userId)
+            .single();;
 
-    const handleLikeSubmit=async (event: React.FormEvent<HTMLFormElement>)=>{
-        event.preventDefault();
-        if (user!) {
-            // いいねを新規作成
-            await supabase.from('likes').insert({
-              user_id: user.id!,
-              comment_id,
-            })
-          } else {
-            // いいねを削除
-            await supabase.from('likes').delete().match({ user_id: user.id, comment_id: comment_id })
-          }
-
-    }
+            if(likeData){
+                setLoading(true);
+            }
+        };
+        fetchLikes();
+    },[userId,imageId])
     return(
         <>
         </>
