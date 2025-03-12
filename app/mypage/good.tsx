@@ -1,13 +1,11 @@
 "use client"
 import { supabase } from "@/utils/supabase/supabase";
+import { eq } from "lodash";
 import React,{useState,useEffect} from "react";
 
-interface GoodThread{
-    imageId:string,
-    userId:string,
-}
+
 export default function Good(){
-    const [imageId,setImageId]= useState<GoodThread[]>([])
+    const [imageId,setImageId]= useState<string>("")
     const [userId, setUserId] = useState<string>("")
     
         useEffect(() => {
@@ -17,9 +15,11 @@ export default function Good(){
                     .from('likes')
                     .select("*", { count: "exact" })
                     .eq("image_id", imageId);
+                    .eq("user_id",userId);
+                    .maybeSingle()
     
                 if (!error) {
-                    console.error('お気に入りページの')
+                    console.error('お気に入りページが取得できませんでした',error)
                 }
                 const { data: likeData } = await supabase
                     .from('likes')
@@ -29,8 +29,8 @@ export default function Good(){
                     .maybeSingle()
     
                 if (likeData) {
-                    setUserId(likeData);
-                    setImageId(likeData);
+                    setUserId(likeData.user_id);
+                    setImageId(likeData.image_id);
                 }
             };
             fetchLikes();
@@ -42,4 +42,8 @@ export default function Good(){
         <p>{imageId}</p>
         </>
     )
+}
+
+function maybeSingle() {
+    throw new Error("Function not implemented.");
 }
