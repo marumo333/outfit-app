@@ -44,6 +44,7 @@ export default function Good() {
             <h1>お気に入りの投稿</h1>
             <p>ユーザーID: {userId || "未設定"}</p>
             <p>画像ID: {imageId || "未設定"}</p>
+            <p>{isLiked?"この投稿はいいねされています！":"この投稿はいいねされていません"}</p>
         </>
     )
 }
