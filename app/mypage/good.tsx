@@ -31,7 +31,7 @@ export default function Good() {
                 if (data && data.length > 0) {
                     const formattedData = data.map((item) => ({
                         image_id: item.image_id,
-                        image_url: item.outfit_image[0]?.image_url,
+                        image_url: item.outfit_image?.image_url || "",
                     }))
                     setLikedImages(formattedData)
                     setIsLiked(true)//いいね済みのものを表示
@@ -52,7 +52,7 @@ export default function Good() {
             {isLiked ? (
                 likedImages.map((img) => (
                     <div key={img.image_id}>
-                        <p>画像ID{img.image_id}</p>
+                        <p>画像ID:{img.image_id}</p>
                         {img.image_url ? (
                             <img src={img.image_url} alt="お気に入りの画像" width={200} />
                         ) : (
