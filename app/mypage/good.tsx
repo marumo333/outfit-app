@@ -2,10 +2,14 @@
 import { supabase } from "@/utils/supabase/supabase";
 import React, { useState, useEffect } from "react";
 
+interface LikesImage{
+    image_url:string,
+    image_id:string,
+}
 
 export default function Good() {
-    const [imageId, setImageId] = useState<string|null>(null)
-    const [userId, setUserId] = useState<string|null>(null)
+    const [imageId, setImageId] = useState<LikesImage[]>([])
+    const [imageUrl, setImageUrl] = useState<string>("")
     const [isLiked,setIsLiked]=useState<Boolean>(false)
 
     useEffect(() => {
@@ -13,10 +17,10 @@ export default function Good() {
 
             try{
             const { data, error } = await supabase
-                .from('profiles')
+                .from('likes')
                 .select(`
-                    id,
-                    likes(user_id,image_id)
+                    iamge_id,
+                    outfit_image(id,image_url)
                     `)
                     console.log(data);
                     console.log(error)
@@ -26,8 +30,8 @@ export default function Good() {
             }
 
             if(data){
-                setUserId(userId),
-                setImageId(imageId)
+                setImageUrl(imageUrl),
+                setImageId(imageId),
                 setIsLiked(true)//いいね済みのものを表示
             }
             else{
@@ -38,13 +42,13 @@ export default function Good() {
             }
         };
         fetchLikes()
-    },[imageId,userId])
+    },[imageId,imageUrl])
 
     return (
         <>
             <h1>お気に入りの投稿</h1>
-            <p>ユーザーID: {userId || "未設定"}</p>
-            <p>画像ID: {imageId || "未設定"}</p>
+            <p>ユーザーID: {imageId ||"未設定"}</p>
+            <p>画像ID: {imageUrl || "未設定"}</p>
             <p>{isLiked?"この投稿はいいねされています！":"この投稿はいいねされていません"}</p>
         </>
     )
