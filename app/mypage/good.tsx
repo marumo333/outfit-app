@@ -1,6 +1,5 @@
 "use client"
 import { supabase } from "@/utils/supabase/supabase";
-import { eq } from "lodash";
 import React, { useState, useEffect } from "react";
 
 
