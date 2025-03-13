@@ -81,7 +81,7 @@ export default function ImageApp() {
 
     // 1. Supabase Storage に画像をアップロード
     const { error: uploadError } = await supabase.storage
-      .from("outfit_image")
+      .from("outfit-image")
       .upload(filePath, file);
 
     if (uploadError) {
@@ -91,7 +91,7 @@ export default function ImageApp() {
 
     // 2. 公開URLを取得
     const { data: publicUrlData } = supabase.storage
-      .from("outfit_image")
+      .from("outfit-image")
       .getPublicUrl(filePath);
 
     const publicUrl = publicUrlData.publicUrl;
