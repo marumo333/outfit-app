@@ -7,10 +7,13 @@ import React, { useState, useEffect } from "react";
 export default function Good() {
     const [imageId, setImageId] = useState<string>("")
     const [userId, setUserId] = useState<string>("")
+    const [isLiked,setIsLiked]=useState<Boolean>(false)
 
     useEffect(() => {
         const fetchLikes = async () => {
             if (!imageId || !userId) return;
+
+            try{
             const { data, error } = await supabase
                 .from('likes')
                 .select("*", { count: "exact" })
@@ -23,13 +26,19 @@ export default function Good() {
                 return;
             }
 
-            if (!data) return;
-            setUserId(data.user_id);
-            setImageId(data.image_id);
-
+            if(data){
+                setIsLiked(true)//いいね済みのものを表示
+            }
+            else{
+                setIsLiked(false)
+            }
+        }catch(err){
+                console.error("お気に入りの取得に失敗しました",err)
+            }
         };
-        fetchLikes();
-    }, [userId, imageId])
+        fetchLikes()
+    },[imageId,userId])
+
     return (
         <>
             <h1>お気に入りの投稿</h1>
@@ -37,8 +46,4 @@ export default function Good() {
             <p>画像ID: {imageId || "未設定"}</p>
         </>
     )
-}
-
-function maybeSingle() {
-    throw new Error("Function not implemented.");
 }
