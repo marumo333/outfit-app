@@ -5,8 +5,8 @@ import React, { useState, useEffect } from "react";
 
 
 export default function Good() {
-    const [imageId, setImageId] = useState<string>("")
-    const [userId, setUserId] = useState<string>("")
+    const [imageId, setImageId] = useState<string|null>(null)
+    const [userId, setUserId] = useState<string|null>(null)
     const [isLiked,setIsLiked]=useState<Boolean>(false)
 
     useEffect(() => {
