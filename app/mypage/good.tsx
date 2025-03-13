@@ -10,22 +10,24 @@ export default function Good() {
 
     useEffect(() => {
         const fetchLikes = async () => {
-            if (!imageId || !userId) return;
 
             try{
             const { data, error } = await supabase
-                .from('likes')
-                .select("*", { count: "exact" })
-                .eq("image_id", imageId)
-                .eq("user_id", userId)
-                .maybeSingle()
-
+                .from('profiles')
+                .select(`
+                    id,
+                    likes(user_id,image_id)
+                    `)
+                    console.log(data);
+                    console.log(error)
             if (error) {
                 console.error('いいねの投稿を取得だきませんでした', error.message);
                 return;
             }
 
             if(data){
+                setUserId(userId),
+                setImageId(imageId)
                 setIsLiked(true)//いいね済みのものを表示
             }
             else{
