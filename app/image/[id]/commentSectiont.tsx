@@ -56,8 +56,10 @@ export const CommentSection = () => {
   //コメントをフェッチ
   const fetchComments = async () => {
     const { data, error } = await supabase
-      .from('comments')
-      .select('*')
+      .from('outfit-image')
+      .select(`id,
+        comments!inner(image_id,content)
+        `)
       .order('created_at', { ascending: false });
 
     if (error) console.error('Error fetching comments', error);
