@@ -57,7 +57,7 @@ export const CommentSection = () => {
   //コメントをフェッチ
   const fetchComments = async () => {
     const { data, error } = await supabase
-      .from('outfit-image')
+      .from('outfit_image')
       .select(`id,
         comments(id,user_id,creadted_at,image_id,content)
         `)
