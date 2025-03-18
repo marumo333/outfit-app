@@ -52,7 +52,7 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
         ""
       );
       const { error: deleteError } = await supabase.storage
-        .from("outfit_image")
+        .from("outfit-image")
         .remove([filePath])
 
       if (deleteError) throw new Error(`削除エラー${deleteError.message}`)
