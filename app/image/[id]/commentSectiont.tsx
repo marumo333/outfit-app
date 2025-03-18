@@ -59,7 +59,7 @@ export const CommentSection = () => {
     const { data, error } = await supabase
       .from('outfit_image')
       .select(`id,
-        comments(id,user_id,creadted_at,image_id,content)
+        comments(id,user_id,created_at,image_id,content)
         `)
       .order('created_at', { ascending: false });
 
@@ -68,7 +68,7 @@ export const CommentSection = () => {
       const formattedComments: Comment[] = data.flatMap(outfit => outfit.comments.map(comment => ({
         id: comment.id,
         content: comment.content,
-        created_at: comment.creadted_at,
+        created_at: comment.created_at,
         user_id: comment.user_id,
         image_id:comment.image_id,
       }))
