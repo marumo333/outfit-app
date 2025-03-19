@@ -55,12 +55,13 @@ export const CommentSection = () => {
   }, [dispatch]);
 
   //コメントをフェッチ
-  const fetchComments = async (ImageId:string) => {
+  const fetchComments = async (imageId: string) => {
+    if (!imageId) return;
     const { data, error } = await supabase
-      .from('outfit_image')
-      .select(`id,image_url,
-        comments(id,user_id,created_at,image_id,content)
+      .from('comments')
+      .select(`id,user_id,created_at,image_id,content)
         `)
+      .eq('image_id', imageId)
       .order('id', { ascending: false });
 
     if (error) console.error('Error fetching comments', error);
@@ -80,7 +81,7 @@ export const CommentSection = () => {
   //コメント情報を更新
   useEffect(() => {
 
-   if(user) fetchComments();
+    if (user) fetchComments();
   }, [user]);
 
 
