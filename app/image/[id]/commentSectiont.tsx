@@ -61,7 +61,7 @@ export const CommentSection = () => {
       .select(`id,
         comments(id,user_id,created_at,image_id,content)
         `)
-      .order('created_at', { ascending: false });
+      .order('id', { ascending: false });
 
     if (error) console.error('Error fetching comments', error);
     else {
