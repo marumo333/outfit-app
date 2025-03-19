@@ -70,132 +70,137 @@ export const CommentSection = () => {
         content: comment.content,
         created_at: comment.created_at,
         user_id: comment.user_id,
-        image_id:comment.image_id,
+        image_id: comment.image_id,
       }))
       );
       setComments(formattedComments);
     }
-    };
+  };
 
-    //コメント情報を更新
-    useEffect(() => {
-      fetchComments();
-    }, []);
-
-
-    const handleCommentSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      if (!comment.trim() || !user) {
-        alert("ログインしてください")
-        return;//無記名送信を避ける
-      }
-      const { data, error } = await supabase
-        .from('comments')
-        .insert([{ content: comment, user_id: user.id }]);
+  //コメント情報を更新
+  useEffect(() => {
+    fetchComments();
+  }, []);
 
 
-      if (error) console.error('Error submitting comment', error);
-      else {
-        setComment('');
-      }
-      setComment("")//入力欄リセット
-      await fetchComments();//コメントを再取得
-    };
-
-
-
-    const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-      setSelectId(Number(event.target.value))
+  const handleCommentSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!comment.trim() || !user) {
+      alert("ログインしてください")
+      return;//無記名送信を避ける
     }
+    const imageId = comments.length > 0 ? comments[0].image_id : null; // 既存のコメントから取得
+    if (!imageId) {
+      alert("画像 ID が見つかりません");
+      return;
+    }
+    const { data, error } = await supabase
+      .from('comments')
+      .insert([{ content: comment, user_id: user.id, image_id: imageId }]);
 
-    const handleDelete = async () => {
-      if (selectId === null || !user) return
 
-      try {
-        const { data: commentData, error: fetchError } = await supabase
-          .from('comments')
-          .select("user_id")
-          .eq("id", selectId)//削除対象を特定
-          .single();
-
-        if (fetchError) throw new Error("削除エラー")
-
-        if (commentData?.user_id !== user.id) {
-          alert("投稿主のみ自身の投稿の削除可能")
-          return;
-        }
-
-        const { error } = await supabase
-          .from("comments")
-          .delete()
-          .eq("id", selectId);
-
-        if (error) throw new Error("削除エラー")
-
-        // UI更新（削除後に再取得 or フィルタリング）
-        await fetchComments();
-        setSelectId(null);
-      } catch (error: any) {
-        alert(error.message);
-      }
-    };
-
-    return (
-      <div>
-        <h1>Comments</h1>
-        <form onSubmit={handleCommentSubmit}>
-          <textarea
-            value={comment}
-            id="comment"
-            name="comment"
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="Write a comment..."
-          />
-          <button className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0"
-            type="submit"
-            id="submitComment"
-            name="subamitComment"
-          >コメント投稿</button>
-        </form>
-        <div>
-          <p>コメント一覧</p>
-        </div>
-        <div>
-          {comments.map((comment) => (
-            <div key={comment.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
-              <p className="text-blue-500">{comment.content}</p>
-              <p>user-id:{comment.user_id}</p>
-            </div>
-          ))}
-        </div>
-        {account ? (
-          <><div>
-            <select id="selectId" name="selectId" onChange={handleSelectChange}>
-              {comments.map((comment) => (
-                <option
-                  key={comment.id}
-                  value={comment.id}
-                  style={{
-                    border: '1px solid #ccc',
-                    padding: '10px',
-                    margin: '10px 0'
-                  }}
-                >
-                  {comment.content}
-                </option>
-              ))}
-            </select>
-          </div><p onClick={handleDelete}
-            className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0"
-          >
-              選択中のコメントを削除
-            </p></>) : (
-          <p>ログインしてくだいさい</p>
-        )}
-      </div>
-    );
+    if (error) console.error('Error submitting comment', error);
+    else {
+      setComment('');
+    }
+    setComment("")//入力欄リセット
+    await fetchComments();//コメントを再取得
   };
 
 
 
-  export default CommentSection;
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectId(Number(event.target.value))
+  }
+
+  const handleDelete = async () => {
+    if (selectId === null || !user) return
+
+    try {
+      const { data: commentData, error: fetchError } = await supabase
+        .from('comments')
+        .select("user_id")
+        .eq("id", selectId)//削除対象を特定
+        .single();
+
+      if (fetchError) throw new Error("削除エラー")
+
+      if (commentData?.user_id !== user.id) {
+        alert("投稿主のみ自身の投稿の削除可能")
+        return;
+      }
+
+      const { error } = await supabase
+        .from("comments")
+        .delete()
+        .eq("id", selectId);
+
+      if (error) throw new Error("削除エラー")
+
+      // UI更新（削除後に再取得 or フィルタリング）
+      await fetchComments();
+      setSelectId(null);
+    } catch (error: any) {
+      alert(error.message);
+    }
+  };
+
+  return (
+    <div>
+      <h1>Comments</h1>
+      <form onSubmit={handleCommentSubmit}>
+        <textarea
+          value={comment}
+          id="comment"
+          name="comment"
+          onChange={(e) => setComment(e.target.value)}
+          placeholder="Write a comment..."
+        />
+        <button className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0"
+          type="submit"
+          id="submitComment"
+          name="subamitComment"
+        >コメント投稿</button>
+      </form>
+      <div>
+        <p>コメント一覧</p>
+      </div>
+      <div>
+        {comments.map((comment) => (
+          <div key={comment.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
+            <p className="text-blue-500">{comment.content}</p>
+            <p>user-id:{comment.user_id}</p>
+          </div>
+        ))}
+      </div>
+      {account ? (
+        <><div>
+          <select id="selectId" name="selectId" onChange={handleSelectChange}>
+            {comments.map((comment) => (
+              <option
+                key={comment.id}
+                value={comment.id}
+                style={{
+                  border: '1px solid #ccc',
+                  padding: '10px',
+                  margin: '10px 0'
+                }}
+              >
+                {comment.content}
+              </option>
+            ))}
+          </select>
+        </div><p onClick={handleDelete}
+          className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0"
+        >
+            選択中のコメントを削除
+          </p></>) : (
+        <p>ログインしてくだいさい</p>
+      )}
+    </div>
+  );
+};
+
+
+
+export default CommentSection;
