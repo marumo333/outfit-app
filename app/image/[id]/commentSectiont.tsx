@@ -55,10 +55,10 @@ export const CommentSection = () => {
   }, [dispatch]);
 
   //コメントをフェッチ
-  const fetchComments = async () => {
+  const fetchComments = async (ImageId:string) => {
     const { data, error } = await supabase
       .from('outfit_image')
-      .select(`id,
+      .select(`id,image_url,
         comments(id,user_id,created_at,image_id,content)
         `)
       .order('id', { ascending: false });
