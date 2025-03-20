@@ -55,26 +55,24 @@ export const CommentSection = () => {
   }, [dispatch]);
 
   //コメントをフェッチ
-  const fetchComments = async (imageId: string) => {
-    if (!imageId) return;
-    const { data, error } = await supabase
-      .from('comments')
-      .select(`id,user_id,created_at,image_id,content)
-        `)
-      .eq('image_id', imageId)
-      .order('id', { ascending: false });
+  const fetchComments = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .select(`
+        id, 
+        image_id, 
+        comments (id, content, created_at, user_id) 
+      `); // outfit_image と紐づく comments を取得
+      console.log(data);
+      console.log(error);
 
-    if (error) console.error('Error fetching comments', error);
-    else {
-      const formattedComments: Comment[] = data.flatMap(outfit => outfit.comments.map(comment => ({
-        id: comment.id,
-        content: comment.content,
-        created_at: comment.created_at,
-        user_id: comment.user_id,
-        image_id: comment.image_id,
-      }))
-      );
-      setComments(formattedComments);
+      if (error) console.error('Error fetching comments', error);
+      return [];
+      return data;
+    } catch (err) {
+      console.log(err, "コメントの取得に失敗しました")
+      return [];
     }
   };
 
