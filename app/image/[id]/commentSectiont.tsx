@@ -95,22 +95,7 @@ export const CommentSection = ({ imageId }: CommentSectionProps) => {
       alert("ログインしてください")
       return;//無記名送信を避ける
     }
-    // outfit_image テーブルから最新の画像IDを取得
-    const { data: imageData, error: imageError } = await supabase
-      .from('outfit_image')
-      .select('id')
-      .order('created_at', { ascending: false })
-
-    if (imageError || !imageData || imageData.length === 0) {
-      alert("画像 ID が見つかりません");
-      return;
-    }
-    const imageId = imageData[0].id; // 既存のコメントから取得
-    if (!imageId) {
-      alert("画像 ID が見つかりません");
-      return;
-    }
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('comments')
       .insert([{ content: comment, user_id: user.id, image_id: imageId }]);
 
