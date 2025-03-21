@@ -146,7 +146,7 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
             </button>
           </div>
           <GoodSection imageId={imageDetail.id} userId={userId} />
-          <CommentSection />
+          <CommentSection imageId={imageDetail.id} />
         </>
       ) : (
         <p className="text-center text-gray-500">画像の詳細を取得できませんでした。</p>
