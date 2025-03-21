@@ -55,6 +55,22 @@ export const CommentSection = () => {
     };
   }, [dispatch]);
 
+  useEffect(()=>{
+    const fetchImageId= async()=>{
+      const {data,error}= await supabase
+      .from('outfit_image')
+      .select('id')
+      .order('created_at',{ascending:false})
+      .limit(1)
+
+      if(error||!data||data.length===0){
+        console.error("idの取得に失敗しました",error)
+        return;
+      }
+      setImageId(data[0].id)
+    }
+    fetchImageId
+  },[])
   //コメントをフェッチ
   const fetchComments = async (imageId: string) => {
     try {
