@@ -69,7 +69,7 @@ export const CommentSection = () => {
       }
       setImageId(data[0].id)
     }
-    fetchImageId
+    fetchImageId();
   },[])
   //コメントをフェッチ
   const fetchComments = async (imageId: string) => {
