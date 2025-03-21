@@ -17,6 +17,7 @@ interface Comment {
 export const CommentSection = () => {
   const [user, setUser] = useState<User | null>(null);
   const [comment, setComment] = useState<string>('');
+  const [imageId,setImageId] =useState<string|null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [selectId, setSelectId] = useState<number | null>(null);
   const auth = useSelector((state: any) => state.auth.isSignIn);
@@ -79,7 +80,9 @@ setComments(data||[])
 
 //コメント情報を更新
 useEffect(() => {
-   fetchComments();
+  if(imageId){
+   fetchComments(imageId);
+  }
 }, []);
 
 
@@ -115,7 +118,7 @@ const handleCommentSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     setComment('');
   }
   setComment("")//入力欄リセット
-  await fetchComments();//コメントを再取得
+  await fetchComments(imageId);//コメントを再取得
 };
 
 
@@ -149,7 +152,7 @@ const handleDelete = async () => {
     if (error) throw new Error("削除エラー")
 
     // UI更新（削除後に再取得 or フィルタリング）
-    await fetchComments();
+    await fetchComments(imageId);
     setSelectId(null);
   } catch (error: any) {
     alert(error.message);
