@@ -30,7 +30,7 @@ export default function Good() {
                 }
 
                 if (data && data.length > 0) {
-                    const formattedData = data.map((item) => ({
+                    const formattedData = (data as any[]).map((item) => ({
                         image_id: item.image_id,
                         image_url: item.outfit_image?.image_url ||"",
                     }))
