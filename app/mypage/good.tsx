@@ -3,6 +3,7 @@ import { supabase } from "@/utils/supabase/supabase";
 import React, { useState, useEffect } from "react";
 
 interface LikesImage {
+    [prop: string]: any
     image_url: string;
     image_id: string;
 }

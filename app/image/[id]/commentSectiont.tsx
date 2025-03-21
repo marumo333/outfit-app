@@ -99,7 +99,7 @@ useEffect(() => {
   if(imageId){
    fetchComments(imageId);
   }
-}, []);
+}, [imageId]);
 
 
 const handleCommentSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -168,7 +168,7 @@ const handleDelete = async () => {
     if (error) throw new Error("削除エラー")
 
     // UI更新（削除後に再取得 or フィルタリング）
-    await fetchComments(imageId);
+    await fetchComments(imageId??"");
     setSelectId(null);
   } catch (error: any) {
     alert(error.message);
