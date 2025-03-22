@@ -3,7 +3,6 @@ import { supabase } from "@/utils/supabase/supabase";
 import React, { useState, useEffect } from "react";
 
 interface LikesImage {
-    [prop: string]: any
     image_url: string;
     image_id: string;
 }
@@ -20,7 +19,7 @@ export default function Good() {
                     .from('likes')
                     .select(`
                     image_id,
-                    outfit_image!inner(id, image_url)
+                    outfit_image(id, image_url)
                     `)
                 console.log(data);
                 console.log(error)

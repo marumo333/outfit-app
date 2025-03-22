@@ -22,7 +22,7 @@ export default function Mypage() {
     const [compressedFile, setCompressedFile] = useState(null); // 圧縮されたファイルを保持するステート
     const [myprof, setMyprof] = useState<string>('')
     const auth = useSelector((state: any) => state.auth.isSignIn);
-    const [user, setUser] = useState<string>('');
+    const [userId, setUserId] = useState<string>('');
     const [cookies] = useCookies()
     const [isClient, setIsClient] = useState(false)
     const [selectId, setSelectId] = useState<number | null>(null);
@@ -32,13 +32,13 @@ export default function Mypage() {
     useEffect(() => {
         const fetchUser =async()=>{
             const { data,error} = await supabase.auth.getUser();
-            console.log(user)
+            console.log(userId)
             if(error){
                 console.log("ユーザー情報を取得だきませんでした",error);
                 return;
             }
             if(data?.user){
-                setUser(data.user.id);
+                setUserId(data.user.id);
           }
         }
         fetchUser();
@@ -46,12 +46,12 @@ export default function Mypage() {
 
 
     const getUser = async () => {
-        if (!user) return;
+        if (!userId) return;
 
         const { data, error } = await supabase
             .from("profiles")
             .select("id, username, avatar_url, updated_at, full_name")
-            .eq("id", user) // ユーザーごとのデータのみ取得
+            .eq("id", userId) // ユーザーごとのデータのみ取得
             .order("updated_at", { ascending: false })
             .limit(1); // 1件のみ取得
 
@@ -67,23 +67,23 @@ export default function Mypage() {
     
 
     useEffect(() => {
-        if (user) {
+        if (userId) {
             getUser();
         }
-    }, [user])
+    }, [userId])
 
     const profSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         console.log(myprof)
-        console.log(user)
-        if (!myprof.trim() || !user) {
+        console.log(userId)
+        if (!myprof.trim() || !userId) {
             alert("ログインしてください")
             return;
         }
         const { data, error } = await supabase
             .from('profiles')
             .upsert(
-                { id: user, full_name: myprof },
+                { id: userId, full_name: myprof },
                 {onConflict:'id'}//idが重複していたら更新
             );
         if (error) console.error('Error submitting comment', error);
@@ -117,12 +117,12 @@ export default function Mypage() {
     };
     const updateChange = async (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
-        if (!file || !user) {
+        if (!file || !userId) {
             alert("画像を選択してください");
             return;
         }
 
-        const filePath = `avatars/${user}_${Date.now()}.jpg`;
+        const filePath = `avatars/${userId}_${Date.now()}.jpg`;
         const { error: uploadError } = await supabase.storage
             .from("avatars")
             .upload(filePath, file, { contentType: "image/jpeg" });
@@ -143,7 +143,7 @@ export default function Mypage() {
         const { error: updateError } = await supabase
             .from("profiles")
             .update({ avatar_url: publicUrl })
-            .eq("id", user);
+            .eq("id", userId);
 
         if (!updateError) {
             setAccount(publicUrl);
@@ -162,7 +162,7 @@ export default function Mypage() {
 
     return (
         <>
-            {user ? (
+            {userId ? (
                 <>
                     <h1 suppressHydrationWarning className="mb-4 pt-28 text-4xl">My Page</h1>
                     <form onSubmit={profSubmit}>
