@@ -5,7 +5,7 @@ import { supabase } from "@/utils/supabase/supabase";
 import { useSelector, useDispatch } from "react-redux";
 import { useCookies } from "react-cookie";
 import Compressor from "compressorjs";
-import Good from "./likes"
+import Like from "./likes"
 
 interface Prof {
     id: number,
@@ -196,7 +196,7 @@ export default function Mypage() {
                                         className="w-auto h-auto max-w-[100px] max-h-[100px] rounded-full"
                                     />
                                 )}
-                                 <Good/>
+                                 <Like/>
                             </div>
                 
                         ))

@@ -7,7 +7,7 @@ interface LikesImage {
     image_id: string;
 }
 
-export default function Good() {
+export default function Like() {
     const [likedImages, setLikedImages] = useState<LikesImage[]>([])
     const [isLiked, setIsLiked] = useState(false)
 
