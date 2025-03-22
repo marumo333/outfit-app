@@ -26,7 +26,7 @@ export default function Mypage() {
     const [cookies] = useCookies()
     const [isClient, setIsClient] = useState(false)
     const [selectId, setSelectId] = useState<number | null>(null);
-    const [account, setAccount] = useState("")//ログイン情報を保持するステート
+    const [avatarUrl, setAvatarUrl] = useState("")//ログイン情報を保持するステート
     
     
     useEffect(() => {
@@ -58,7 +58,7 @@ export default function Mypage() {
         if (error) {
             console.error("fetching error", error);
         } else if (data.length > 0) {
-            setAccount(data[0].avatar_url); //最新のアイコン URL をセット
+            setAvatarUrl(data[0].avatar_url); //最新のアイコン URL をセット
             setMyprofs(data);
         }
 
@@ -146,7 +146,7 @@ export default function Mypage() {
             .eq("id", userId);
 
         if (!updateError) {
-            setAccount(publicUrl);
+            setAvatarUrl(publicUrl);
         }
 
         await getUser();
@@ -190,9 +190,9 @@ export default function Mypage() {
                         myprofs.map((myprof) => (
                             <div key={myprof.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
                                 <p className="text-blue-500">{myprof.full_name|| "No Username"}</p>
-                                {account && (
+                                {avatarUrl && (
                                     <img
-                                        src={account}
+                                        src={avatarUrl}
                                         className="w-auto h-auto max-w-[100px] max-h-[100px] rounded-full"
                                     />
                                 )}
