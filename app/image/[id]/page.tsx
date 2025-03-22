@@ -3,7 +3,7 @@
 import React, { useEffect, useState, use } from "react";
 import { supabase } from "@/utils/supabase/supabase";
 import CommentSection from "./commentSectiont"
-import GoodSection from "./goodSection"
+import LikeSection from "./likeSection"
 
 interface ImageItem {
   id: string; // 画像ID
@@ -145,7 +145,7 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
               投稿の削除
             </button>
           </div>
-          <GoodSection imageId={imageDetail.id} userId={userId} />
+          <LikeSection imageId={imageDetail.id} userId={userId} />
           <CommentSection imageId={imageDetail.id} />
         </>
       ) : (

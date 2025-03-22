@@ -4,12 +4,12 @@ import { supabase } from "@/utils/supabase/supabase";
 import React, { useState, useEffect } from "react";
 
 
-interface GoodThread {
+interface LikeThread {
     imageId: string,
     userId: string,
 }
 
-export const GoodSection: React.FC<GoodThread> = ({ imageId, userId }) => {
+export const LikeSection: React.FC<LikeThread> = ({ imageId, userId }) => {
     const [isLiked, setIsLiked] = useState(false)
     const [likeCount, setLikeCount] = useState(0)
     const [loading, setLoading] = useState(false)
@@ -82,4 +82,4 @@ export const GoodSection: React.FC<GoodThread> = ({ imageId, userId }) => {
     );
 };
 
-export default GoodSection;
+export default LikeSection;
