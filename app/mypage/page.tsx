@@ -5,7 +5,7 @@ import { supabase } from "@/utils/supabase/supabase";
 import { useSelector, useDispatch } from "react-redux";
 import { useCookies } from "react-cookie";
 import Compressor from "compressorjs";
-import Good from "./good"
+import Good from "./likes"
 
 interface Prof {
     id: number,
