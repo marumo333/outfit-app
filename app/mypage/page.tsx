@@ -16,7 +16,7 @@ interface Prof {
 }
 
 export default function Mypage() {
-    const [myprof, setMyprof] = useState<Prof[]>([])//ユーザー情報をセット
+    const [myprof, setMyprof] = useState<Prof|null>(null)//ユーザー情報をセット
     const [file, setFile] = useState<File | null>(null)
     const [error, setError] = useState("")
     const auth = useSelector((state: any) => state.auth.isSignIn);
