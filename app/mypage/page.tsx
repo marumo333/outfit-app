@@ -16,11 +16,9 @@ interface Prof {
 }
 
 export default function Mypage() {
-    const [myprofs, setMyprofs] = useState<Prof[]>([])//ユーザー情報をセット
+    const [myprof, setMyprof] = useState<Prof[]>([])//ユーザー情報をセット
     const [file, setFile] = useState<File | null>(null)
     const [error, setError] = useState("")
-    const [compressedFile, setCompressedFile] = useState(null); // 圧縮されたファイルを保持するステート
-    const [myprof, setMyprof] = useState<string>('')
     const auth = useSelector((state: any) => state.auth.isSignIn);
     const [userId, setUserId] = useState<string>('');
     const [cookies] = useCookies()
