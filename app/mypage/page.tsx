@@ -57,7 +57,7 @@ export default function Mypage() {
             console.error("fetching error", error);
         } else if (data.length > 0) {
             setAvatarUrl(data[0].avatar_url); //最新のアイコン URL をセット
-            setMyprofs(data);
+            setMyprof(data);
         }
 
     };
@@ -74,7 +74,7 @@ export default function Mypage() {
         event.preventDefault();
         console.log(myprof)
         console.log(userId)
-        if (!myprof.trim() || !userId) {
+        if (!myprof || !userId) {
             alert("ログインしてください")
             return;
         }
@@ -86,9 +86,9 @@ export default function Mypage() {
             );
         if (error) console.error('Error submitting comment', error);
         else {
-            setMyprof('');
+            setMyprof();
         }
-        setMyprof("")//入力欄リセット
+        setMyprof(myprof)//入力欄リセット
         await getUser();//ユーザー情報を再取得
     }
 
@@ -184,10 +184,9 @@ export default function Mypage() {
                         onChange={handleFileChange}
                     />
                     <button onClick={updateChange} className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0">アイコンを更新</button>
-                    {myprofs.length > 0 ? (
-                        myprofs.map((myprof) => (
-                            <div key={myprof.id} style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
-                                <p className="text-blue-500">{myprof.full_name|| "No Username"}</p>
+                    
+                            <div  style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
+                                <p className="text-blue-500">{myprof.username|| "No Username"}</p>
                                 {avatarUrl && (
                                     <img
                                         src={avatarUrl}
@@ -197,10 +196,8 @@ export default function Mypage() {
                                  <Like/>
                             </div>
                 
-                        ))
-                    ) : (
-                        <p>ユーザーデータがありません</p>  
-                    )}
+            
+                    
 
                 </>
             ) : (
