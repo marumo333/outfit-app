@@ -57,7 +57,7 @@ export default function Mypage() {
             console.error("fetching error", error);
         } else if (data.length > 0) {
             setAvatarUrl(data[0].avatar_url); //最新のアイコン URL をセット
-            setMyprof(data);
+            setMyprof(myprof);
         }
 
     };
@@ -88,7 +88,7 @@ export default function Mypage() {
         else {
             setMyprof(myprof);
         }
-        setMyprof([])//入力欄リセット
+        setMyprof(null)//入力欄リセット
         await getUser();//ユーザー情報を再取得
     }
 
@@ -165,11 +165,15 @@ export default function Mypage() {
                     <h1 suppressHydrationWarning className="mb-4 pt-28 text-4xl">My Page</h1>
                     <form onSubmit={profSubmit}>
                         <textarea
-                            
+                            value={myprof?.full_name}
                             id="myprof"
                             name="myprof"
-                            onChange={() => setMyprof([])}
-                            placeholder="write a username..."
+                            onChange={(e) =>{
+                                if(myprof){
+                                 setMyprof({ ...myprof, full_name: e.target.value })
+                                }
+                                }
+                            }
                         />
                         <button className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0"
                             type="submit"
@@ -186,7 +190,7 @@ export default function Mypage() {
                     <button onClick={updateChange} className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0">アイコンを更新</button>
                     
                             <div  style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
-                                <p className="text-blue-500">{myprof.full_name|| "No Username"}</p>
+                                <p className="text-blue-500">{myprof?.full_name|| "No Username"}</p>
                                 {avatarUrl && (
                                     <img
                                         src={avatarUrl}
