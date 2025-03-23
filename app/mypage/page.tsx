@@ -186,7 +186,7 @@ export default function Mypage() {
                     <button onClick={updateChange} className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0">アイコンを更新</button>
                     
                             <div  style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
-                                <p className="text-blue-500">{myprof|| "No Username"}</p>
+                                <p className="text-blue-500">{myprof.full_name|| "No Username"}</p>
                                 {avatarUrl && (
                                     <img
                                         src={avatarUrl}
