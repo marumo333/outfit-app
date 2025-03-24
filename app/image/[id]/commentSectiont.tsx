@@ -62,7 +62,7 @@ export const CommentSection = ({ imageId }: CommentSectionProps) => {
   const fetchComments = async (imageId: string) => {
     try {
       const { data, error } = await supabase
-        .from('comments')
+        .from('post_comments')
         .select(`
         id, content, created_at, user_id,image_id
       `) // outfit_image と紐づく comments を取得
@@ -96,7 +96,7 @@ export const CommentSection = ({ imageId }: CommentSectionProps) => {
       return;//無記名送信を避ける
     }
     const { error } = await supabase
-      .from('comments')
+      .from('post_comments')
       .insert([{ content: comment, user_id: user.id, image_id: imageId }]);
 
 
@@ -119,7 +119,7 @@ export const CommentSection = ({ imageId }: CommentSectionProps) => {
 
     try {
       const { data: commentData, error: fetchError } = await supabase
-        .from('comments')
+        .from('post_comments')
         .select("user_id")
         .eq("id", selectId)//削除対象を特定
         .single();
@@ -132,7 +132,7 @@ export const CommentSection = ({ imageId }: CommentSectionProps) => {
       }
 
       const { error } = await supabase
-        .from("comments")
+        .from("post_comments")
         .delete()
         .eq("id", selectId);
 
