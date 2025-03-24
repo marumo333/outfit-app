@@ -66,7 +66,7 @@ export default function Search() {
     setLoading(true);
     try{
     const { data,error } = await supabase
-      .from("outfit_image")
+      .from("posts")
       .select("*");
 
       if(error){
@@ -89,7 +89,7 @@ export default function Search() {
     }
 try{
       const { data: posts, error } = await supabase
-        .from("outfit_image")
+        .from("posts")
         .select("*")
         .ilike("title", `%${value}%`);
 

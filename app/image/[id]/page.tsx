@@ -22,7 +22,7 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
   const fetchImage = async (imageId: string) => {
     setLoading(true);
     const { data, error } = await supabase
-      .from("outfit_image")
+      .from("posts")
       .select("id,name,image_url,title,content")
       .eq("id", imageId)
       .single();
@@ -52,13 +52,13 @@ export default function Image({ params }: { params: Promise<{ id: string }> }) {
         ""
       );
       const { error: deleteError } = await supabase.storage
-        .from("outfit-image")
+        .from("posts")
         .remove([filePath])
 
       if (deleteError) throw new Error(`削除エラー${deleteError.message}`)
 
       const { error: dbError } = await supabase
-        .from("outfit_image")
+        .from("posts")
         .delete()
         .eq("id", imageDetail.id);
 

@@ -26,7 +26,7 @@ export default function TagSearch() {
         setLoading(true)
         try {
             const { data, error } = await supabase
-                .from("outfit_image")
+                .from("posts")
                 .select("*");
 
             if (error) {
@@ -46,7 +46,7 @@ export default function TagSearch() {
         setLoading(true)
         try {
             const { data, error } = await supabase
-                .from("outfit_image")
+                .from("posts")
                 .select("*")
                 .ilike("tag", `%${value}%`);
 
@@ -80,7 +80,6 @@ export default function TagSearch() {
         const value =e.target.value
         setTagsDisplay(value);
         debounceTagSearch(value);
-        console.log("aaa")
     };
 
     

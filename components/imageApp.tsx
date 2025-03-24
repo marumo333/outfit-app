@@ -25,7 +25,7 @@ export default function ImageApp() {
     setLoadingState("flex justify-center");
 
     const { data, error } = await supabase
-      .from("outfit_image")
+      .from("posts")
       .select("id, name, image_url, title, content");
 
     if (error) {
@@ -75,7 +75,7 @@ export default function ImageApp() {
 
     // 1. Supabase Storage に画像をアップロード
     const { error: uploadError } = await supabase.storage
-      .from("outfit-image")
+      .from("posts")
       .upload(filePath, file);
 
     if (uploadError) {
@@ -85,14 +85,14 @@ export default function ImageApp() {
 
     // 2. 公開URLを取得
     const { data: publicUrlData } = supabase.storage
-      .from("outfit-image")
+      .from("posts")
       .getPublicUrl(filePath);
 
     const publicUrl = publicUrlData.publicUrl;
 
     // 3. Supabase の outfit_image テーブルにデータを保存
     const { error: insertError } = await supabase
-      .from("outfit_image")
+      .from("posts")
       .insert([
         {
           user_id: userId,

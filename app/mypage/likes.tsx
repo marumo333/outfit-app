@@ -19,7 +19,7 @@ export default function Like() {
                     .from('likes')
                     .select(`
                     image_id,
-                    outfit_image(id, image_url)
+                    posts(id, image_url)
                     `)
                 console.log(data);
                 console.log(error)
