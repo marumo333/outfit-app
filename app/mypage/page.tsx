@@ -9,7 +9,6 @@ import Like from "./likes"
 
 interface Prof {
     id: string,
-    username: string,
     avatar_url: string,
     updated_at: string,
     full_name: string
@@ -18,7 +17,6 @@ interface Prof {
 export default function Mypage() {
     const [myprof, setMyprof] = useState<Prof>({
         id: "",
-        username: "",
         avatar_url: "",
         updated_at: "",
         full_name: "",
@@ -81,7 +79,7 @@ export default function Mypage() {
         const { data, error } = await supabase
             .from('users')
             .upsert(
-                { id: userId, full_name: myprof.full_name, username: myprof.username },
+                { id: userId, full_name: myprof.full_name },
                 { onConflict: 'id' }//idが重複していたら更新
             );
         if (error) console.error('Error submitting comment', error);
@@ -171,7 +169,6 @@ export default function Mypage() {
                             onChange={(e) => {
                                 setMyprof(prev => ({
                                     id: prev?.id || "",  // 既存のIDがあれば使用
-                                    username: prev?.username || "",
                                     avatar_url: prev?.avatar_url || "",
                                     updated_at: prev?.updated_at || "",
                                     full_name: e.target.value

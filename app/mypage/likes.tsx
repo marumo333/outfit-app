@@ -21,10 +21,7 @@ export default function Like({ userId }: Likes) {
             try {
                 const { data, error } = await supabase
                     .from('likes')
-                    .select(`
-                    image_id,user_id,
-                    posts(id, image_url)
-                    `)
+                    .select("image_id,user_id,posts(id,image_url)")
                     .eq('user_id', userId)
                 console.log(data);
                 console.log(error)
@@ -48,8 +45,9 @@ export default function Like({ userId }: Likes) {
                 console.error("お気に入りの取得に失敗しました", err)
             }
         };
-        if (userId) fetchLikes()
-    }, [])
+        if (userId){ fetchLikes()
+        }
+    }, [userId])
 
     return (
         <div>
