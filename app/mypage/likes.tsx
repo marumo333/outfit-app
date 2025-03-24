@@ -9,9 +9,9 @@ interface LikesImage {
 
 interface Likes {
     userId: string;
-  }
-  
-export default function Like({userId}:Likes) {
+}
+
+export default function Like({ userId }: Likes) {
     const [likedImages, setLikedImages] = useState<LikesImage[]>([])
     const [isLiked, setIsLiked] = useState(false)
 
@@ -22,9 +22,10 @@ export default function Like({userId}:Likes) {
                 const { data, error } = await supabase
                     .from('likes')
                     .select(`
-                    image_id,
+                    image_id,user_id,
                     posts(id, image_url)
                     `)
+                    .eq('user_id', userId)
                 console.log(data);
                 console.log(error)
                 if (error) {
@@ -35,7 +36,7 @@ export default function Like({userId}:Likes) {
                 if (data && data.length > 0) {
                     const formattedData = (data as any[]).map((item) => ({
                         image_id: item.image_id,
-                        image_url: item.posts?.image_url ||"",
+                        image_url: item.posts?.image_url || "",
                     }))
                     setLikedImages(formattedData)
                     setIsLiked(true)//いいね済みのものを表示
@@ -47,7 +48,7 @@ export default function Like({userId}:Likes) {
                 console.error("お気に入りの取得に失敗しました", err)
             }
         };
-        fetchLikes()
+        if (userId) fetchLikes()
     }, [])
 
     return (
