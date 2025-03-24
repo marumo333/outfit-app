@@ -16,7 +16,7 @@ interface Prof {
 }
 
 export default function Mypage() {
-    const [myprof, setMyprof] = useState<Prof|null>(null)//ユーザー情報をセット
+    const [myprof, setMyprof] = useState<Prof | null>(null)//ユーザー情報をセット
     const [file, setFile] = useState<File | null>(null)
     const [error, setError] = useState("")
     const auth = useSelector((state: any) => state.auth.isSignIn);
@@ -25,25 +25,25 @@ export default function Mypage() {
     const [isClient, setIsClient] = useState(false)
     const [selectId, setSelectId] = useState<number | null>(null);
     const [avatarUrl, setAvatarUrl] = useState("")//ログイン情報を保持するステート
-    
-    
     useEffect(() => {
-        const fetchUser =async()=>{
-            const { data,error} = await supabase.auth.getUser();
+        const fetchUser = async () => {
+            const { data, error } = await supabase.auth.getUser();
             console.log(userId)
-            if(error){
-                console.log("ユーザー情報を取得だきませんでした",error);
+            if (error) {
+                console.log("ユーザー情報を取得だきませんでした", error);
                 return;
             }
-            if(data?.user){
+            const uid = data.user.id;
+            setUserId(uid);
+            await getUser(uid);
+            if (data?.user) {
                 setUserId(data.user.id);
-          }
+            }
         }
         fetchUser();
     }, []);
 
-
-    const getUser = async (userId:string) => {
+    const getUser = async (userId: string) => {
         if (!userId) return;
 
         const { data, error } = await supabase
@@ -62,8 +62,6 @@ export default function Mypage() {
 
     };
 
-    
-
     useEffect(() => {
         if (userId) {
             getUser(userId);
@@ -81,15 +79,14 @@ export default function Mypage() {
         const { data, error } = await supabase
             .from('users')
             .upsert(
-                { id: userId, full_name: myprof.full_name },
-                {onConflict:'id'}//idが重複していたら更新
+                { id: userId, full_name: myprof.full_name, username: myprof.username },
+                { onConflict: 'id' }//idが重複していたら更新
             );
         if (error) console.error('Error submitting comment', error);
         else {
             setMyprof(myprof);
         }
-        setMyprof(null)//入力欄リセット
-        await getUser(userId);//ユーザー情報を再取得
+        getUser(userId);//ユーザー情報を再取得
     }
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,14 +162,15 @@ export default function Mypage() {
                     <h1 suppressHydrationWarning className="mb-4 pt-28 text-4xl">My Page</h1>
                     <form onSubmit={profSubmit}>
                         <textarea
-                            value={myprof?.full_name??""}
+                            value={myprof?.full_name ?? ""}
                             id="myprof"
                             name="myprof"
-                            onChange={(e) =>{
-                                if(myprof){
-                                 setMyprof({ ...myprof, full_name: e.target.value })
+                            placeholder="write your username"
+                            onChange={(e) => {
+                                if (myprof) {
+                                    setMyprof({ ...myprof, full_name: e.target.value })
                                 }
-                                }
+                            }
                             }
                         />
                         <button className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0"
@@ -188,20 +186,20 @@ export default function Mypage() {
                         onChange={handleFileChange}
                     />
                     <button onClick={updateChange} className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0">アイコンを更新</button>
-                    
-                            <div  style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
-                                <p className="text-blue-500">{myprof?.full_name|| "No Username"}</p>
-                                {avatarUrl && (
-                                    <img
-                                        src={avatarUrl}
-                                        className="w-auto h-auto max-w-[100px] max-h-[100px] rounded-full"
-                                    />
-                                )}
-                                 <Like userId={myprof?.id||""}/>
-                            </div>
-                
-            
-                    
+
+                    <div style={{ border: '1px solid #ccc', padding: '10px', margin: '10px 0' }}>
+                        <p className="text-blue-500">{myprof?.full_name || "No Username"}</p>
+                        {avatarUrl && (
+                            <img
+                                src={avatarUrl}
+                                className="w-auto h-auto max-w-[100px] max-h-[100px] rounded-full"
+                            />
+                        )}
+                        <Like userId={myprof?.id || ""} />
+                    </div>
+
+
+
 
                 </>
             ) : (
