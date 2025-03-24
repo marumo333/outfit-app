@@ -47,7 +47,7 @@ export default function Mypage() {
         if (!userId) return;
 
         const { data, error } = await supabase
-            .from("profiles")
+            .from("users")
             .select("id, username, avatar_url, updated_at, full_name")
             .eq("id", userId) // ユーザーごとのデータのみ取得
             .order("updated_at", { ascending: false })
@@ -79,7 +79,7 @@ export default function Mypage() {
             return;
         }
         const { data, error } = await supabase
-            .from('profiles')
+            .from('users')
             .upsert(
                 { id: userId, full_name: myprof.full_name },
                 {onConflict:'id'}//idが重複していたら更新
@@ -139,7 +139,7 @@ export default function Mypage() {
         }
 
         const { error: updateError } = await supabase
-            .from("profiles")
+            .from("users")
             .update({ avatar_url: publicUrl })
             .eq("id", userId);
 
