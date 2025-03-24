@@ -7,7 +7,11 @@ interface LikesImage {
     image_id: string;
 }
 
-export default function Like() {
+interface Likes {
+    userId: string;
+  }
+  
+export default function Like({userId}:Likes) {
     const [likedImages, setLikedImages] = useState<LikesImage[]>([])
     const [isLiked, setIsLiked] = useState(false)
 
@@ -31,7 +35,7 @@ export default function Like() {
                 if (data && data.length > 0) {
                     const formattedData = (data as any[]).map((item) => ({
                         image_id: item.image_id,
-                        image_url: item.outfit_image?.image_url ||"",
+                        image_url: item.posts?.image_url ||"",
                     }))
                     setLikedImages(formattedData)
                     setIsLiked(true)//いいね済みのものを表示

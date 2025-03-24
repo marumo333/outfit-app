@@ -8,7 +8,7 @@ import Compressor from "compressorjs";
 import Like from "./likes"
 
 interface Prof {
-    id: number,
+    id: string,
     username: string,
     avatar_url: string,
     updated_at: string,
@@ -43,7 +43,7 @@ export default function Mypage() {
     }, []);
 
 
-    const getUser = async () => {
+    const getUser = async (userId:string) => {
         if (!userId) return;
 
         const { data, error } = await supabase
@@ -66,7 +66,7 @@ export default function Mypage() {
 
     useEffect(() => {
         if (userId) {
-            getUser();
+            getUser(userId);
         }
     }, [userId])
 
@@ -89,7 +89,7 @@ export default function Mypage() {
             setMyprof(myprof);
         }
         setMyprof(null)//入力欄リセット
-        await getUser();//ユーザー情報を再取得
+        await getUser(userId);//ユーザー情報を再取得
     }
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,7 +147,7 @@ export default function Mypage() {
             setAvatarUrl(publicUrl);
         }
 
-        await getUser();
+        await getUser(userId);
     };
 
     useEffect(() => {
@@ -197,7 +197,7 @@ export default function Mypage() {
                                         className="w-auto h-auto max-w-[100px] max-h-[100px] rounded-full"
                                     />
                                 )}
-                                 <Like/>
+                                 <Like userId={myprof?.id||""}/>
                             </div>
                 
             
