@@ -16,7 +16,14 @@ interface Prof {
 }
 
 export default function Mypage() {
-    const [myprof, setMyprof] = useState<Prof | null>(null)//ユーザー情報をセット
+    const [myprof, setMyprof] = useState<Prof>({
+        id: "",
+        username: "",
+        avatar_url: "",
+        updated_at: "",
+        full_name: "",
+    });
+
     const [file, setFile] = useState<File | null>(null)
     const [error, setError] = useState("")
     const auth = useSelector((state: any) => state.auth.isSignIn);
@@ -28,21 +35,16 @@ export default function Mypage() {
     useEffect(() => {
         const fetchUser = async () => {
             const { data, error } = await supabase.auth.getUser();
-            console.log(userId)
-            if (error) {
-                console.log("ユーザー情報を取得だきませんでした", error);
+            if (error || !data?.user) {
+                console.log("ユーザー情報を取得できませんでした", error);
                 return;
             }
             const uid = data.user.id;
             setUserId(uid);
             await getUser(uid);
-            if (data?.user) {
-                setUserId(data.user.id);
-            }
-        }
+        };
         fetchUser();
     }, []);
-
     const getUser = async (userId: string) => {
         if (!userId) return;
 
@@ -167,11 +169,15 @@ export default function Mypage() {
                             name="myprof"
                             placeholder="write your username"
                             onChange={(e) => {
-                                if (myprof) {
-                                    setMyprof({ ...myprof, full_name: e.target.value })
-                                }
-                            }
-                            }
+                                setMyprof(prev => ({
+                                    id: prev?.id || "",  // 既存のIDがあれば使用
+                                    username: prev?.username || "",
+                                    avatar_url: prev?.avatar_url || "",
+                                    updated_at: prev?.updated_at || "",
+                                    full_name: e.target.value
+                                }));
+                            }}
+
                         />
                         <button className="bg-sky-400 text-primary-foreground hover:bg-sky-400/90 border-sky-500 border-b-4 active:border-b-0"
                             type="submit"
