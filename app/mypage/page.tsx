@@ -57,7 +57,7 @@ export default function Mypage() {
             console.error("fetching error", error);
         } else if (data.length > 0) {
             setAvatarUrl(data[0].avatar_url); //最新のアイコン URL をセット
-            setMyprof(myprof);
+            setMyprof(data[0]);
         }
 
     };
@@ -81,7 +81,7 @@ export default function Mypage() {
         const { data, error } = await supabase
             .from('profiles')
             .upsert(
-                { id: userId, full_name: myprof },
+                { id: userId, full_name: myprof.full_name },
                 {onConflict:'id'}//idが重複していたら更新
             );
         if (error) console.error('Error submitting comment', error);
@@ -165,7 +165,7 @@ export default function Mypage() {
                     <h1 suppressHydrationWarning className="mb-4 pt-28 text-4xl">My Page</h1>
                     <form onSubmit={profSubmit}>
                         <textarea
-                            value={myprof?.full_name}
+                            value={myprof?.full_name??""}
                             id="myprof"
                             name="myprof"
                             onChange={(e) =>{
