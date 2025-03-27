@@ -25,7 +25,7 @@ export default function Redirect() {
                     window.localStorage.setItem('oauth_provider_token', session.provider_token || "");
                     window.localStorage.setItem('oauth_provider_refresh_token', session.provider_refresh_token || "")
 
-                    window.location.href = "http://localhost:3000/private";
+                    window.location.href = "https://your-app-name.vercel.app/private";
                 }
 
                 if (event === 'SIGNED_OUT') {
