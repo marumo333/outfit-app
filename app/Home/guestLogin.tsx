@@ -18,7 +18,7 @@ export default function () {
       }, []);
     return (
         <>
-            <Link className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg" href="/Index">
+            <Link className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg" href="/">
                 ゲストログイン
             </Link>
             <Icon url={avatarUrl} />
