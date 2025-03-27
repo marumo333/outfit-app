@@ -58,7 +58,7 @@ export default function X() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'twitter',
       options: {
-        redirectTo: `https://outfitapp-delta.vercel.app/redirect`,
+        redirectTo: `http://localhost:3000/redirect`,
       },
     })
     router.push("/private")
