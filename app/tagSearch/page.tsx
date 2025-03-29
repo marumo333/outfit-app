@@ -112,15 +112,15 @@ export default function TagSearch() {
                     <li className="font-bold border-b border-gray-300 pb-2 mb-2">
                         <p>タグ一覧</p>
                     </li>
-                    {tags.map((tag) => (
+                    {uniqueTags.map((uniqueTag,index) => (
                         <li
-                            key={tag.id}
+                            key={index}
                             className="inline-block m-[0_0.1em_0.6em_0] p-[0.6em] leading-none text-blue-600 bg-white border border-blue-600 rounded-[2em]"
                         >
                             <button
                                 className="font-semibold border-none bg-transparent outline-none cursor-pointer"
                                 onClick={handleTagChange}
-                            >{tag.tag}</button>
+                            >{uniqueTag}</button>
                         </li>
                     ))}
                 </ul>
