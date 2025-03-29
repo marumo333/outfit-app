@@ -17,6 +17,8 @@ export default function TagSearch() {
     const [tags, setTags] = useState<TagItem[]>([])
     const [tagsDisplay, setTagsDisplay] = useState("")
     const [loading, setLoading] = useState(false);
+    //タグの重複を排除
+    const uniqueTags = Array.from(new Set(tags.map(tag=>tag.tag)))
 
     useEffect(() => {
         fetchTags();
