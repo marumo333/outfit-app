@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 export default function Logout() {
   const auth = useSelector((state: any) => state.auth.isSignIn);
   const dispatch = useDispatch()
-  const [user, setUser] = useState("")//ログイン情報を保持するステート
+  const [user, setUser] = useState<string|null|undefined>(undefined)//ログイン情報を保持するステート
   const [cookies] = useCookies()
   const router = useRouter();
   useEffect(() => {
@@ -53,6 +53,9 @@ export default function Logout() {
     catch (error: any) {
       console.error("ログアウトエラー発生", error.message)
     }
+  }
+  if(user===undefined){
+    <div>ローディング中</div>
   }
   return (
     <>
