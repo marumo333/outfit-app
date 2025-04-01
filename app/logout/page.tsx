@@ -56,9 +56,9 @@ export default function Logout() {
   }
   return (
     <>
-      <button onClick={logOut} className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg">
+    {user?(<><button onClick={logOut} className="bg-yellow-500 hover:bg-yellow-600 text-white font-medium py-2 px-4 rounded-lg">
         ログアウト
-      </button>
+      </button></>):(<></>)}
     </>
   )
 }
