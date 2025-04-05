@@ -19,47 +19,12 @@ export default function Google() {
   const [cookies] = useCookies()
   const [avatarUrl, setAvatarUrl] = useState<string>(""); // URLを保存する状態
   const router = useRouter();
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log(event)
-        if (session?.user) {
-          setUser(session.user.email || "Google User")
-          dispatch(signIn({
-            name: session.user.email,
-            iconUrl: "",
-            token: session.provider_token
-          }))
-          window.localStorage.setItem('oauth_provider_token', session.provider_token || "");
-          window.localStorage.setItem('oauth_provider_refresh_token', session.provider_refresh_token || "")
-        window.history.replaceState({}, document.title, window.location.pathname);
-
-        router.push("/private");
-        }
-
-        if (event === 'SIGNED_OUT') {
-          window.localStorage.removeItem('oauth_provider_token')
-          window.localStorage.removeItem('oauth_provider_refresh_token')
-          setUser("")//user情報をリセット
-          dispatch(signOut());
-        }
-      }
-    );
-    //クリーンアップ処理追加（リスナー削除）
-    return () => {
-      authListener?.subscription.unsubscribe();
-    };
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (user) {
-      router.push("/private")
-    }
-  }, [user, router])
+  
 
   const signInGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
+      options: { redirectTo: "https://outfitapp-delta.vercel.app/redirect" },
     })
     if (error) throw new Error(error.message)
   }
