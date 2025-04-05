@@ -32,6 +32,9 @@ export default function Google() {
           }))
           window.localStorage.setItem('oauth_provider_token', session.provider_token || "");
           window.localStorage.setItem('oauth_provider_refresh_token', session.provider_refresh_token || "")
+        window.history.replaceState({}, document.title, window.location.pathname);
+
+        router.push("/private");
         }
 
         if (event === 'SIGNED_OUT') {
@@ -61,7 +64,6 @@ export default function Google() {
         redirectTo: `http://localhost:3000/redirect`,
       },
     })
-    router.push("/private")
     if (error) throw new Error(error.message)
   }
 

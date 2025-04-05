@@ -28,6 +28,7 @@ export default function Redirect() {
                     window.localStorage.setItem('oauth_provider_refresh_token', session.provider_refresh_token || "")
 
                     router.push("/private"); 
+                    
                 }
 
                 if (event === 'SIGNED_OUT') {
