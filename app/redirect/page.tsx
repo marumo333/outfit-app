@@ -26,9 +26,10 @@ export default function Redirect() {
                     }))
                     window.localStorage.setItem('oauth_provider_token', session.provider_token || "");
                     window.localStorage.setItem('oauth_provider_refresh_token', session.provider_refresh_token || "")
+                    window.history.replaceState({}, document.title, window.location.pathname);
 
                     router.push("/private"); 
-                    
+
                 }
 
                 if (event === 'SIGNED_OUT') {
