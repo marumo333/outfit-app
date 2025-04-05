@@ -61,7 +61,7 @@ export default function Google() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `http://localhost:3000/redirect`,
+        redirectTo: `http://outfitapp-delta.vercel.app/redirect`,
       },
     })
     if (error) throw new Error(error.message)
