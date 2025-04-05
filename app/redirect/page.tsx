@@ -3,12 +3,14 @@ import { useSelector, useDispatch } from "react-redux";
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/supabase";
 import { signOut, signIn } from "../authSlice";
+import { useRouter } from "next/navigation";
 
 
 export default function Redirect() {
     const auth = useSelector((state: any) => state.auth.isSignIn);
     const dispatch = useDispatch()
     const [user, setUser] = useState("")//ログイン情報を保持するステート
+    const router = useRouter();
 
 
     useEffect(() => {
@@ -25,7 +27,7 @@ export default function Redirect() {
                     window.localStorage.setItem('oauth_provider_token', session.provider_token || "");
                     window.localStorage.setItem('oauth_provider_refresh_token', session.provider_refresh_token || "")
 
-                    window.location.href = "https://your-app-name.vercel.app/private";
+                    router.push("/private"); 
                 }
 
                 if (event === 'SIGNED_OUT') {
