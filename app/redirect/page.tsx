@@ -1,51 +1,65 @@
-"use client"
-import { useSelector, useDispatch } from "react-redux";
+"use client";
+
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { supabase } from "@/utils/supabase/supabase";
-import { signOut, signIn } from "../authSlice";
+import { signIn, signOut } from "../authSlice";
 import { useRouter } from "next/navigation";
 
+export default function RedirectPage() {
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const [loading, setLoading] = useState(true); // ローディング制御用
 
-export default function Redirect() {
-    const auth = useSelector((state: any) => state.auth.isSignIn);
-    const dispatch = useDispatch()
-    const [user, setUser] = useState("")//ログイン情報を保持するステート
-    const router = useRouter();
+  useEffect(() => {
+    // ✅ 既存ログインセッション確認（初回読み込み時）
+    const checkSession = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      const session = data.session;
 
+      if (session?.user) {
+        dispatch(signIn({
+          name: session.user.email,
+          iconUrl: "",
+          token: session.provider_token,
+        }));
+        router.push("/private");
+      } else {
+        setLoading(false); // セッションがないので通常UI表示へ
+      }
+    };
 
-    useEffect(() => {
-        const { data: authListener } = supabase.auth.onAuthStateChange(
-            (event, session) => {
-                console.log(event)
-                if (session?.user) {
-                    setUser(session.user.email || "Login User")
-                    dispatch(signIn({
-                        name: session.user.email,
-                        iconUrl: "",
-                        token: session.provider_token
-                    }))
-                    window.localStorage.setItem('oauth_provider_token', session.provider_token || "");
-                    window.localStorage.setItem('oauth_provider_refresh_token', session.provider_refresh_token || "")
-                    window.history.replaceState({}, document.title, window.location.pathname);
+    checkSession();
 
-                    router.push("/private"); 
+    // ✅ 認証イベントの監視（Google OAuth後の発火に対応）
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === "SIGNED_IN" && session?.user) {
+          dispatch(signIn({
+            name: session.user.email,
+            iconUrl: "",
+            token: session.provider_token,
+          }));
+          router.push("/private");
+        } else if (event === "SIGNED_OUT") {
+          dispatch(signOut());
+        }
+      }
+    );
 
-                }
+    // ✅ クリーンアップ
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, [dispatch, router]);
 
-                if (event === 'SIGNED_OUT') {
-                    window.localStorage.removeItem('oauth_provider_token')
-                    window.localStorage.removeItem('oauth_provider_refresh_token')
-                    dispatch(signOut());
-                    setUser("")//user情報をリセット
-                }
-            }
-        );
-        //クリーンアップ処理追加（リスナー削除）
-        return () => {
-            authListener?.subscription.unsubscribe();
-        };
-    }, [dispatch]);
-    return (
-        <div>Homeページに移動しています。</div>
-    )
+  return (
+    <div className="min-h-screen flex flex-col justify-center items-center text-gray-700">
+      {loading ? (
+        <p>ログイン処理中です。しばらくお待ちください...</p>
+      ) : (
+        <p>ログインしていないためホームに戻ります。</p>
+      )}
+    </div>
+  );
 }

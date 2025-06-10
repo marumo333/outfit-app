@@ -16,12 +16,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ja">
       <body className="bg-background text-foreground">
+        <ClientWrapper>
         <Header />
         <main className="min-h-screen flex flex-col items-center px2">
           {/* ClientWrapperを使用してクライアント側のロジックを分離 */}
-          <ClientWrapper>{children}</ClientWrapper>
+          {children}
         </main>
+        </ClientWrapper>
       </body>
+      
     </html>
   );
 }
