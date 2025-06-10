@@ -204,18 +204,34 @@ export default function ImageApp() {
         <div className="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>
       </div>
 
-      <ul className="flex flex-wrap w-full">
-        {images.map((item) => (
-          <li className="w-1/4 h-auto p-1" key={item.id}>
-            <a className="hover:opacity-50" href={item.url} target="_blank" rel="noopener noreferrer">
-              <img className="object-cover max-h-32 w-full" src={item.url} alt={item.name} />
-            </a>
-            <Link href={`/image/${encodeURIComponent(item.id)}`}>
-              <span className="text-blue-500 underline hover:opacity-50">詳細を表示</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 w-full">
+  {images.map((item) => (
+    <li key={item.id}>
+      {/* アスペクト比ボックスでカードを揃える（4:3は例。正方形なら aspect-square） */}
+      <a
+        href={item.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block aspect-[4/3] overflow-hidden bg-gray-50"
+      >
+        <img
+          src={item.url}
+          alt={item.name}
+          className="w-full h-full object-contain"
+          loading="lazy"
+        />
+      </a>
+
+      {/* 詳細ページへのリンク */}
+      <Link href={`/image/${encodeURIComponent(item.id)}`}>
+        <span className="text-blue-500 underline hover:opacity-50">
+          詳細を表示
+        </span>
+      </Link>
+    </li>
+  ))}
+</ul>
+
     </>
   );
 }
